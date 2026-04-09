@@ -1,0 +1,191 @@
+/* Root Variables */
+:root {
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-light: #f8f9fa;
+  --text-main: #212529;
+  --text-muted: #6c757d;
+  --text-success: #198754;
+  --text-danger: #dc3545;
+  --border-color: #dee2e6;
+  --navbar-bg: #ffffff;
+  --dropdown-bg: #ffffff;
+  --dropdown-item-hover: #e9ecef;
+}
+
+[data-bs-theme="dark"] {
+  --bg-main: #121212;
+  --bg-card: #1e1e1e;
+  --bg-light: #2c2c2c;
+  --text-main: #e9ecef;
+  --text-muted: #adb5bd;
+  --text-success: #6fbf73;
+  --text-danger: #f87171;
+  --border-color: #383838;
+  --navbar-bg: #1e1e1e;
+  --dropdown-bg: #2c2c2c;
+  --dropdown-item-hover: #3a3a3a;
+}
+
+/* Global */
+body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Override Bootstrap classes */
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .dropdown-menu {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+  background-color: var(--bg-light) !important;
+}
+
+[data-bs-theme="dark"] .text-dark,
+[data-bs-theme="dark"] .fw-bold,
+[data-bs-theme="dark"] .text-dark.small {
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .text-muted,
+[data-bs-theme="dark"] .small.text-muted {
+  color: var(--text-muted) !important;
+}
+
+[data-bs-theme="dark"] .text-success {
+  color: var(--text-success) !important;
+}
+
+[data-bs-theme="dark"] .text-danger {
+  color: var(--text-danger) !important;
+}
+
+/* Table */
+.table {
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+.table thead th {
+  background-color: var(--bg-light) !important;
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+
+.table td {
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .table-light {
+  background-color: var(--bg-light) !important;
+}
+
+/* Inputs */
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
+.btn-light {
+  background-color: var(--bg-light) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+.btn-outline-primary {
+  border-color: #0d6efd;
+  color: #0d6efd;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary {
+  border-color: #6ea8fe;
+  color: #6ea8fe;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  background-color: var(--dropdown-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dropdown-item {
+  color: var(--text-main) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(--dropdown-item-hover) !important;
+}
+
+/* Modal */
+.modal-content {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.modal-header,
+.modal-footer {
+  border-color: var(--border-color) !important;
+}
+
+/* Progress bar */
+.progress {
+  background-color: var(--border-color) !important;
+}
+
+/* Chart container */
+.chart-container {
+  filter: saturate(0.8) brightness(1.2);
+}
+
+/* Đồng bộ viền và shadow khi focus vào input group */
+.input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-radius: 0.375rem;
+}
+
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .btn {
+  border-color: #86b7fe;
+  outline: 0;
+}
+
+/* Xóa shadow mặc định của các thành phần riêng lẻ để tránh trùng lặp */
+.input-group .form-control:focus,
+.input-group .input-group-text:focus,
+.input-group .btn:focus {
+  box-shadow: none;
+  border-color: #86b7fe;
+  z-index: 3;
+}
+
+/* Hiệu ứng cho nút trong input group khi focus (bằng keyboard) */
+.input-group .btn:focus-visible {
+  outline: none;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
