@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 const QrRegister = () => {
     const [searchParams] = useSearchParams();
@@ -10,8 +11,10 @@ const QrRegister = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [emailError, setEmailError] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     useEffect(() => {
         if (!token) {
@@ -22,22 +25,29 @@ const QrRegister = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setEmailError('');
         if (password !== confirmPassword) {
             toast.showToast('error', 'Lỗi', 'Mật khẩu xác nhận không khớp');
             return;
         }
         setLoading(true);
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/users/qr-register`, {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/qr-register`, {
                 token,
                 email,
                 password
             });
-            toast.showToast('success', 'Đăng ký thành công', 'Vui lòng đăng nhập');
-            navigate('/login');
+            // Đăng nhập tự động với user vừa tạo
+            login(res.data);
+            toast.showToast('success', 'Đăng ký thành công', 'Chào mừng bạn đến với Finance Manager');
+            navigate('/');
         } catch (err) {
-            const msg = err.response?.data || 'Đăng ký thất bại';
-            toast.showToast('error', 'Lỗi', msg);
+            const errorMsg = err.response?.data || 'Đăng ký thất bại';
+            if (errorMsg.includes('Email đã tồn tại')) {
+                setEmailError('Email đã được sử dụng. Vui lòng chọn email khác.');
+            } else {
+                toast.showToast('error', 'Lỗi', errorMsg);
+            }
         } finally {
             setLoading(false);
         }
@@ -55,7 +65,14 @@ const QrRegister = () => {
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
                                         <label className="form-label fw-semibold">Email</label>
-                                        <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} required />
+                                        <input 
+                                            type="email" 
+                                            className={`form-control ${emailError ? 'is-invalid' : ''}`} 
+                                            value={email} 
+                                            onChange={e => setEmail(e.target.value)} 
+                                            required 
+                                        />
+                                        {emailError && <div className="invalid-feedback">{emailError}</div>}
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label fw-semibold">Mật khẩu</label>
