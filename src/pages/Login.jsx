@@ -72,7 +72,7 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/users/login', { username, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, { username, password });
       login(res.data);
       if (rememberMe) {
         localStorage.setItem('rememberedUsername', username);
@@ -94,7 +94,7 @@ const Login = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/users/google-login', { token: credentialResponse.credential });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/google-login`, { token: credentialResponse.credential });
       login(res.data);
       if (rememberMe) {
         localStorage.setItem('rememberedUsername', res.data.username);

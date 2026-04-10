@@ -169,7 +169,7 @@ const Register = () => {
                     {/* Cột bên phải: QR code */}
                     <div className="col-md-6 d-flex flex-column align-items-center justify-content-center border-start">
                       <div className="text-center">
-                        <h5 className="fw-bold mb-3">Hoặc quét mã QR để đăng nhập</h5>
+                        <h5 className="fw-bold mb-3">Hoặc quét mã QR để đăng ký nhanh</h5>
                         {qrLoading ? (
                           <div className="spinner-border text-primary" role="status">
                             <span className="visually-hidden">Đang tải...</span>
@@ -181,7 +181,7 @@ const Register = () => {
                         ) : (
                           <p className="text-muted">Không thể tạo mã QR, vui lòng thử lại sau.</p>
                         )}
-                        <p className="text-muted small mt-3">Sử dụng điện thoại quét mã QR để đăng nhập nhanh</p>
+                        <p className="text-muted small mt-3">Sử dụng điện thoại quét mã QR để đăng ký nhanh</p>
                       </div>
                     </div>
                   </div>
