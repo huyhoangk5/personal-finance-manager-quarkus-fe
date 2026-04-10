@@ -176,7 +176,7 @@ const Register = () => {
                           </div>
                         ) : qrToken ? (
                           <div className="bg-white p-3 rounded-3 d-inline-block">
-                            <QRCodeCanvas value={`${window.location.origin}/qr-login?token=${qrToken}`} size={180} />
+                            <QRCodeCanvas value={`${window.location.origin}/qr-register?token=${qrToken}`} size={180} />
                           </div>
                         ) : (
                           <p className="text-muted">Không thể tạo mã QR, vui lòng thử lại sau.</p>
