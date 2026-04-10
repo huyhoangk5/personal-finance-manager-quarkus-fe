@@ -165,7 +165,20 @@ const Login = () => {
                       {!showOtpForm ? (
                         <>
                           <form onSubmit={handleSubmit}>
-                            <div className="mb-3"><label className="form-label fw-semibold">Tên đăng nhập</label><div className="input-group"><span className="input-group-text bg-light border-end-0"><Mail size={18} /></span><input type="text" className="form-control border-start-0 ps-0" placeholder="Nhập tên đăng nhập" value={username} onChange={e => setUsername(e.target.value)} required /></div></div>
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold">Tên đăng nhập hoặc Email</label>
+                                <div className="input-group">
+                                    <span className="input-group-text bg-light border-end-0"><Mail size={18} /></span>
+                                    <input 
+                                        type="text" 
+                                        className="form-control border-start-0 ps-0" 
+                                        placeholder="Nhập tên đăng nhập hoặc email" 
+                                        value={username} 
+                                        onChange={e => setUsername(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                            </div>
                             <div className="mb-3"><label className="form-label fw-semibold">Mật khẩu</label><div className="input-group"><span className="input-group-text bg-light border-end-0"><Lock size={18} /></span><input type="password" className="form-control border-start-0 ps-0" placeholder="Nhập mật khẩu" value={password} onChange={e => setPassword(e.target.value)} required /></div></div>
                             <div className="mb-3 d-flex justify-content-between align-items-center">
                               <div className="form-check">
