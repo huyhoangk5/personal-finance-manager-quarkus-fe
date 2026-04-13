@@ -61,13 +61,10 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
     if (!value || isNaN(parseFloat(value))) return [];
     const num = parseFloat(value);
     if (num === 0) return [];
-    const firstDigit = parseInt(value.toString()[0]);
-    const suggestions = [];
     const multipliers = [1000, 10000, 100000, 1000000];
-    for (let mult of multipliers) {
-      suggestions.push(firstDigit * mult);
-    }
-    return [...new Set(suggestions)].sort((a, b) => a - b);
+    let suggestions = multipliers.map(m => num * m);
+    suggestions = [...new Set(suggestions)].filter(s => s <= 10000000).sort((a, b) => a - b);
+    return suggestions;
   };
 
   const handleAmountChange = (e) => {
@@ -194,13 +191,8 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
                   {showAmountSuggestions && amountSuggestions.length > 0 && (
                     <div className="position-absolute top-100 start-0 mt-1 w-100 bg-white border rounded shadow-sm z-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                       {amountSuggestions.map((sug, idx) => (
-                        <div
-                          key={idx}
-                          className="p-2 hover-bg-light cursor-pointer"
-                          style={{ cursor: 'pointer' }}
-                          onMouseDown={() => selectSuggestion(sug)}
-                        >
-                          {sug.toLocaleString()}đ
+                        <div key={idx} className="p-2 hover-bg-light cursor-pointer" style={{ cursor: 'pointer' }} onMouseDown={() => selectSuggestion(sug)}>
+                          {sug.toLocaleString('vi-VN')}đ
                         </div>
                       ))}
                     </div>

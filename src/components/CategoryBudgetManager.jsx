@@ -21,7 +21,6 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const [incomeData, setIncomeData] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [deleteTarget, setDeleteTarget] = useState(null);
-  // state cho gợi ý hạn mức
   const [showNewLimitSuggestions, setShowNewLimitSuggestions] = useState(false);
   const [newLimitSuggestions, setNewLimitSuggestions] = useState([]);
   const [showEditLimitSuggestions, setShowEditLimitSuggestions] = useState(false);
@@ -96,13 +95,10 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
     if (!value || isNaN(parseFloat(value))) return [];
     const num = parseFloat(value);
     if (num === 0) return [];
-    const firstDigit = parseInt(value.toString()[0]);
-    const suggestions = [];
     const multipliers = [1000, 10000, 100000, 1000000];
-    for (let mult of multipliers) {
-      suggestions.push(firstDigit * mult);
-    }
-    return [...new Set(suggestions)].sort((a, b) => a - b);
+    let suggestions = multipliers.map(m => num * m);
+    suggestions = [...new Set(suggestions)].filter(s => s <= 10000000).sort((a, b) => a - b);
+    return suggestions;
   };
 
   const handleNewLimitChange = (e) => {
@@ -298,7 +294,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                     <div className="position-absolute top-100 start-0 mt-1 w-100 bg-white border rounded shadow-sm z-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                       {newLimitSuggestions.map((sug, idx) => (
                         <div key={idx} className="p-2 hover-bg-light cursor-pointer" style={{ cursor: 'pointer' }} onMouseDown={() => selectNewLimitSuggestion(sug)}>
-                          {sug.toLocaleString()}đ
+                          {sug.toLocaleString('vi-VN')}đ
                         </div>
                       ))}
                     </div>
@@ -399,7 +395,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                       <div className="position-absolute top-100 start-0 mt-1 w-100 bg-white border rounded shadow-sm z-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         {editLimitSuggestions.map((sug, idx) => (
                           <div key={idx} className="p-2 hover-bg-light cursor-pointer" style={{ cursor: 'pointer' }} onMouseDown={() => selectEditLimitSuggestion(sug)}>
-                            {sug.toLocaleString()}đ
+                            {sug.toLocaleString('vi-VN')}đ
                           </div>
                         ))}
                       </div>
@@ -413,7 +409,6 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
         </div>
       )}
 
-      {/* Modal xác nhận xóa */}
       <ConfirmationModal
         show={deleteTarget !== null}
         title="Xác nhận xóa"
