@@ -15,11 +15,14 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
   const [showFilters, setShowFilters] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [selectedRows, setSelectedRows] = useState(new Set()); // Lưu id các dòng được chọn
+  const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/transactions?userId=${userId}`);
       setTransactions(res.data);
+      setSelectedRows(new Set()); // Reset selection khi refresh
     } catch (err) {
       console.error("Lỗi lấy danh sách giao dịch:", err);
     }
@@ -113,13 +116,69 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
     setShowFilters(false);
   };
 
+  // Xử lý checkbox
+  const toggleSelectRow = (id) => {
+    const newSelected = new Set(selectedRows);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedRows(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedRows.size === filteredTransactions.length) {
+      setSelectedRows(new Set());
+    } else {
+      const allIds = filteredTransactions.map(t => t.transactionId);
+      setSelectedRows(new Set(allIds));
+    }
+  };
+
+  const deleteSelected = async () => {
+    if (selectedRows.size === 0) {
+      toast.showToast('warning', 'Chưa chọn', 'Vui lòng chọn giao dịch cần xóa');
+      return;
+    }
+    if (window.confirm(`Bạn có chắc muốn xóa ${selectedRows.size} giao dịch đã chọn?`)) {
+      setIsDeletingMultiple(true);
+      let successCount = 0;
+      let failCount = 0;
+      for (const id of selectedRows) {
+        try {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/transactions/${id}?userId=${userId}`);
+          successCount++;
+        } catch (err) {
+          failCount++;
+          console.error(`Lỗi xóa giao dịch ${id}:`, err);
+        }
+      }
+      toast.showToast('info', 'Kết quả xóa', `Đã xóa ${successCount} giao dịch, thất bại ${failCount}`);
+      fetchTransactions();
+      if (onDataChange) onDataChange();
+      setIsDeletingMultiple(false);
+    }
+  };
+
   return (
     <>
       <div className="card border-0 shadow-sm p-4 rounded-4 bg-white">
         <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-          <button onClick={onAdd} className="btn btn-primary d-flex align-items-center gap-2 rounded-3 px-3 shadow-sm">
-            <PlusCircle size={20} /> Thêm giao dịch
-          </button>
+          <div className="d-flex gap-2">
+            <button onClick={onAdd} className="btn btn-primary d-flex align-items-center gap-2 rounded-3 px-3 shadow-sm">
+              <PlusCircle size={20} /> Thêm giao dịch
+            </button>
+            {selectedRows.size > 0 && (
+              <button
+                onClick={deleteSelected}
+                className="btn btn-danger d-flex align-items-center gap-2 rounded-3 px-3 shadow-sm"
+                disabled={isDeletingMultiple}
+              >
+                <Trash2 size={20} /> Xóa đã chọn ({selectedRows.size})
+              </button>
+            )}
+          </div>
           <div className="d-flex gap-2">
             <input
               type="text"
@@ -169,6 +228,13 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
           <table className="table table-hover align-middle">
             <thead className="small text-muted">
               <tr>
+                <th style={{ width: '30px' }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.size === filteredTransactions.length && filteredTransactions.length > 0}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
                 <th className="cursor-pointer" onClick={() => handleSort('date')}>NGÀY {getSortIcon('date')}</th>
                 <th>DANH MỤC</th>
                 <th className="text-end cursor-pointer" onClick={() => handleSort('amount')}>SỐ TIỀN {getSortIcon('amount')}</th>
@@ -180,6 +246,13 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
               {filteredTransactions.length > 0 ? (
                 filteredTransactions.map((t) => (
                   <tr key={t.transactionId}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.has(t.transactionId)}
+                        onChange={() => toggleSelectRow(t.transactionId)}
+                      />
+                    </td>
                     <td className="small">{t.date}  </td>
                     <td>
                       <span className={`badge rounded-pill ${t.type === 'THU' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>
@@ -197,10 +270,10 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="5" className="text-center py-4 text-muted">Không có giao dịch phù hợp</td></tr>
+                <tr><td colSpan="6" className="text-center py-4 text-muted">Không có giao dịch phù hợp</td></tr>
               )}
             </tbody>
-          </table>
+        </table>
         </div>
       </div>
 

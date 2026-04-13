@@ -25,6 +25,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const [newLimitSuggestions, setNewLimitSuggestions] = useState([]);
   const [showEditLimitSuggestions, setShowEditLimitSuggestions] = useState(false);
   const [editLimitSuggestions, setEditLimitSuggestions] = useState([]);
+  const [selectedExpenseIds, setSelectedExpenseIds] = useState(new Set());
 
   const fetchSpending = useCallback(async () => {
     if (!userId) return;
@@ -261,6 +262,31 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   }
   const incomeCategories = categories.filter(cat => cat.type === 'THU');
 
+  const deleteSelectedExpenses = async () => {
+    if (selectedExpenseIds.size === 0) {
+      toast.showToast('warning', 'Chưa chọn', 'Vui lòng chọn danh mục cần xóa');
+      return;
+    }
+    if (window.confirm(`Bạn có chắc muốn xóa ${selectedExpenseIds.size} danh mục chi tiêu đã chọn?`)) {
+      let successCount = 0;
+      let failCount = 0;
+      for (const id of selectedExpenseIds) {
+        try {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/categories/${id}`);
+          successCount++;
+        } catch (err) {
+          failCount++;
+          console.error(`Lỗi xóa danh mục ${id}:`, err);
+        }
+      }
+      toast.showToast('info', 'Kết quả xóa', `Đã xóa ${successCount} danh mục, thất bại ${failCount}`);
+      fetchCategories();
+      fetchBudgets();
+      if (onDataChange) onDataChange();
+      setSelectedExpenseIds(new Set());
+    }
+  };
+
   return (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -345,17 +371,59 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
         <div className="col-md-7">
           <div className="border rounded-3 p-3 h-100 bg-light bg-opacity-50">
-            <h6 className="mb-3 text-danger fw-bold">📊 Chi tiêu</h6>
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h6 className="mb-0 text-danger fw-bold">📊 Chi tiêu</h6>
+              {selectedExpenseIds.size > 0 && (
+                <button onClick={deleteSelectedExpenses} className="btn btn-sm btn-danger">
+                  Xóa đã chọn ({selectedExpenseIds.size})
+                </button>
+              )}
+            </div>
             <div className="table-responsive">
               <table className="table table-sm align-middle mb-0">
                 <thead className="small text-muted">
-                  <tr><th style={{ width: '50px' }}>STT</th><th>Tên danh mục</th><th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>Hạn mức {getSortIcon('limit')}</th><th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>Đã chi {getSortIcon('spent')}</th><th className="text-center">Trạng thái</th><th className="text-center" style={{ width: '70px' }}>Thao tác</th></tr>
+                  <tr>
+                    <th style={{ width: '30px' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedExpenseIds.size === expenseCategoriesRaw.length && expenseCategoriesRaw.length > 0}
+                        onChange={() => {
+                          if (selectedExpenseIds.size === expenseCategoriesRaw.length) {
+                            setSelectedExpenseIds(new Set());
+                          } else {
+                            setSelectedExpenseIds(new Set(expenseCategoriesRaw.map(c => c.categoryId)));
+                          }
+                        }}
+                      />
+                    </th>
+                    <th style={{ width: '50px' }}>STT</th>
+                    <th>Tên danh mục</th>
+                    <th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>Hạn mức {getSortIcon('limit')}</th>
+                    <th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>Đã chi {getSortIcon('spent')}</th>
+                    <th className="text-center">Trạng thái</th>
+                    <th className="text-center" style={{ width: '70px' }}>Thao tác</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {sortedExpenseData.map((cat, idx) => {
                     const percent = cat.currentLimit > 0 ? (cat.spent / cat.currentLimit) * 100 : 0;
                     return (
                       <tr key={cat.categoryId}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedExpenseIds.has(cat.categoryId)}
+                            onChange={() => {
+                              const newSelected = new Set(selectedExpenseIds);
+                              if (newSelected.has(cat.categoryId)) {
+                                newSelected.delete(cat.categoryId);
+                              } else {
+                                newSelected.add(cat.categoryId);
+                              }
+                              setSelectedExpenseIds(newSelected);
+                            }}
+                          />
+                        </td>
                         <td className="text-center">{idx+1}</td>
                         <td className="fw-bold">{cat.categoryName}</td>
                         <td className="text-end"><span className="fw-bold">{cat.currentLimit.toLocaleString()}đ</span></td>
@@ -372,7 +440,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                       </tr>
                     );
                   })}
-                  {expenseCategoriesRaw.length === 0 && <tr><td colSpan="6" className="text-center text-muted py-2">Chưa có danh mục chi tiêu</td></tr>}
+                  {expenseCategoriesRaw.length === 0 && <tr><td colSpan="7" className="text-center text-muted py-2">Chưa có danh mục chi tiêu</td></tr>}
                 </tbody>
               </table>
             </div>
