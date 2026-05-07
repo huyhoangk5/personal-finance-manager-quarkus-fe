@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import CategoryBudgetManager from '../components/CategoryBudgetManager';
-import UserMenu from '../components/UserMenu';
 import MonthlyCalendar from '../components/MonthlyCalendar';
 
 const Dashboard = () => {
@@ -32,10 +31,9 @@ const Dashboard = () => {
     }
   };
 
-  // Gọi fetchBalance khi user thay đổi hoặc refreshKey thay đổi
   useEffect(() => {
     fetchBalance();
-  }, [user, refreshKey]); // ✅ thêm refreshKey
+  }, [user, refreshKey]);
 
   useEffect(() => {
     if (user) {
@@ -44,84 +42,132 @@ const Dashboard = () => {
   }, [user]);
 
   const handleTransactionSaved = () => {
-    // Tăng refreshKey để trigger fetchBalance trong useEffect
     setRefreshKey(prev => prev + 1);
   };
 
   if (!user) return null;
 
   return (
-    <div className="min-vh-100 bg-main pb-5">
-      <nav className="navbar shadow-sm mb-4">
-        <div className="container py-2 d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-2 text-primary-blue fw-bold fs-4">
-            <Wallet size={28} /> Finance Manager
-          </div>
-          <UserMenu user={user} onLogout={() => { logout(); navigate('/login'); }} onUpdateUser={(u) => login(u)} />
+    <div className="min-vh-100 bg-main d-flex">
+      {/* Sidebar Section */}
+      <aside className="sidebar-premium">
+        <div className="sidebar-brand">
+          <Wallet size={32} />
+          <span>Finance</span>
         </div>
-      </nav>
 
-      <div className="container mt-4">
+        <nav className="sidebar-nav">
+          <button 
+            className={`sidebar-link ${activeTab === 'transactions' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('transactions')}
+          >
+            <List />
+            <span>Giao dịch</span>
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'categoriesBudget' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('categoriesBudget')}
+          >
+            <Layers />
+            <span>Ngân sách</span>
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'stats' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('stats')}
+          >
+            <PieChart />
+            <span>Thống kê</span>
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'account' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('account')}
+          >
+            <User />
+            <span>Tài khoản</span>
+          </button>
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="user-profile-sidebar">
+            <div className="user-avatar-sidebar">
+              {user.username?.charAt(0).toUpperCase()}
+            </div>
+            <div className="user-info-sidebar overflow-hidden">
+              <div className="fw-bold text-truncate" style={{ fontSize: '0.9rem' }}>{user.fullName || user.username}</div>
+              <div className="text-white-50 small text-truncate" style={{ fontSize: '0.75rem' }}>{user.email || 'Thành viên'}</div>
+            </div>
+          </div>
+          <button onClick={() => { logout(); navigate('/login'); }} className="sidebar-link text-danger w-100 border-0">
+            <LogOut />
+            <span>Đăng xuất</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Section */}
+      <main className="main-content-with-sidebar flex-grow-1">
+        <header className="d-flex justify-content-between align-items-center mb-5">
+          <div>
+            <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
+            <p className="text-muted mb-0">Chào mừng bạn trở lại, {user.fullName || user.username}!</p>
+          </div>
+          <button onClick={() => { setEditingTransaction(null); setModalOpen(true); }} className="btn btn-primary-blue d-flex align-items-center gap-2 shadow-sm px-4">
+            <PlusCircle size={20} /> Thêm nhanh
+          </button>
+        </header>
+
         {/* Dashboard Overview Cards */}
         <div className="row g-4 mb-5">
           <div className="col-md-4">
-            <div className="card border-0 shadow-lg p-4 bg-primary-blue text-white h-100 hover-scale">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <small className="text-white-50 fw-bold">SỐ DƯ HIỆN TẠI</small>
+            <div className="card border-0 shadow-lg p-4 bg-primary-blue text-white h-100">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <small className="text-white-50 fw-bold letter-spacing-1">SỐ DƯ HIỆN TẠI</small>
                 <div className="bg-white bg-opacity-20 p-2 rounded-circle">
                   <Wallet size={20} />
                 </div>
               </div>
-              <h2 className="fw-bold mb-0">{(balance.balance || 0).toLocaleString()} <small className="fs-6 fw-normal opacity-75">VND</small></h2>
+              <h2 className="fw-bold mb-0 text-white">
+                {(balance.balance || 0).toLocaleString()} <small className="fs-6 fw-normal opacity-75">VND</small>
+              </h2>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-4 bg-white h-100 hover-scale">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <small className="text-muted fw-bold">THU NHẬP THÁNG</small>
+            <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-success border-4">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG</small>
                 <div className="bg-success bg-opacity-10 p-2 rounded-circle text-success">
-                  <Layers size={20} />
+                  <PlusCircle size={20} />
                 </div>
               </div>
-              <h2 className="fw-bold mb-0 text-main">{(balance.totalIncomes || 0).toLocaleString()}</h2>
-              <div className="mt-2 text-success small fw-bold">+ 12% so với tháng trước</div>
+              <h2 className="fw-bold mb-0 text-dark">{(balance.totalIncomes || 0).toLocaleString()}</h2>
+              <div className="mt-2 text-success small fw-bold d-flex align-items-center gap-1">
+                 Tăng 12% so với tháng trước
+              </div>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-4 bg-white h-100 hover-scale">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <small className="text-muted fw-bold">CHI TIÊU THÁNG</small>
+            <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-danger border-4">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG</small>
                 <div className="bg-danger bg-opacity-10 p-2 rounded-circle text-danger">
                   <PieChart size={20} />
                 </div>
               </div>
-              <h2 className="fw-bold mb-0 text-main">{(balance.totalExpenses || 0).toLocaleString()}</h2>
-              <div className="mt-2 text-danger small fw-bold">- 5% so với tháng trước</div>
+              <h2 className="fw-bold mb-0 text-dark">{(balance.totalExpenses || 0).toLocaleString()}</h2>
+              <div className="mt-2 text-danger small fw-bold d-flex align-items-center gap-1">
+                 Giảm 5% so với tháng trước
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation (Premium Segmented Control) */}
-        <div className="d-flex justify-content-center mb-5">
-          <div className="nav-tabs-premium p-1 shadow-sm">
-            <button className={`nav-link-premium ${activeTab === 'transactions' ? 'active' : ''}`} onClick={() => setActiveTab('transactions')}>
-              <List size={18} className="me-1" /> Giao dịch
-            </button>
-            <button className={`nav-link-premium ${activeTab === 'categoriesBudget' ? 'active' : ''}`} onClick={() => setActiveTab('categoriesBudget')}>
-              <Layers size={18} className="me-1" /> Ngân sách
-            </button>
-            <button className={`nav-link-premium ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>
-              <PieChart size={18} className="me-1" /> Thống kê
-            </button>
-          </div>
-        </div>
-
+        {/* Dynamic Content Based on activeTab */}
         <div className="row">
           <div className="col-12">
             {activeTab === 'transactions' && (
               <div className="row g-4">
                 <div className="col-lg-8">
-                  <div className="card border-0 shadow-sm overflow-hidden">
+                  <div className="card border-0 shadow-sm overflow-hidden bg-white">
                     <TransactionTable
                       userId={user.userId}
                       onDataChange={handleTransactionSaved}
@@ -132,7 +178,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="col-lg-4">
-                  <div className="card border-0 shadow-sm p-3">
+                  <div className="card border-0 shadow-sm p-3 bg-white">
                     <MonthlyCalendar 
                       userId={user.userId} 
                       month={calendarMonth} 
@@ -144,28 +190,44 @@ const Dashboard = () => {
               </div>
             )}
             {activeTab === 'categoriesBudget' && (
-              <div className="card border-0 shadow-sm p-4">
+              <div className="card border-0 shadow-sm p-4 bg-white">
                 <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />
               </div>
             )}
             {activeTab === 'stats' && (
-              <div className="card border-0 shadow-sm p-4">
+              <div className="card border-0 shadow-sm p-4 bg-white">
                 <SpendingChart userId={user.userId} />
+              </div>
+            )}
+            {activeTab === 'account' && (
+              <div className="card border-0 shadow-sm p-5 bg-white text-center">
+                 <div className="bg-soft-blue rounded-circle d-inline-flex p-4 mb-4 text-primary-blue shadow-sm">
+                    <User size={64} />
+                 </div>
+                 <h2 className="fw-bold text-dark">{user.fullName || user.username}</h2>
+                 <p className="text-muted mb-4">{user.email || 'Chưa cập nhật email'}</p>
+                 <hr className="w-50 mx-auto mb-4" />
+                 <div className="row justify-content-center">
+                    <div className="col-md-6 text-start">
+                       <div className="mb-3">
+                          <label className="small fw-bold text-muted text-uppercase">Tên đăng nhập</label>
+                          <div className="fw-bold text-dark">{user.username}</div>
+                       </div>
+                       <div className="mb-3">
+                          <label className="small fw-bold text-muted text-uppercase">ID Người dùng</label>
+                          <div className="fw-bold text-dark">#{user.userId}</div>
+                       </div>
+                    </div>
+                 </div>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       <TransactionFormModal userId={user.userId} show={modalOpen} onClose={() => setModalOpen(false)} onTransactionAdded={handleTransactionSaved} editData={editingTransaction} />
     </div>
   );
 };
-
-const TabButton = ({ active, onClick, icon, label }) => (
-  <button className={`btn flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-3 transition-all ${active ? 'btn-primary' : 'btn-light'}`} onClick={onClick}>
-    {icon} <span>{label}</span>
-  </button>
-);
 
 export default Dashboard;

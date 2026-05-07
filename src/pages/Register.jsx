@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { Wallet, Lock, Mail, UserPlus, Facebook, Smartphone } from 'lucide-react';
+import { Wallet, Lock, Mail, UserPlus, Facebook, Smartphone, ArrowRight } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { QRCodeCanvas } from 'qrcode.react';
