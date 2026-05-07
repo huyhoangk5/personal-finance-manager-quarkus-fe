@@ -139,7 +139,14 @@ const Login = () => {
       const msg = err.response?.data || 'Email không tồn tại';
       setQrError(msg);
       toast.showToast('error', 'Lỗi', msg);
-          <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%)' }}>
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
+  return (
+    <GoogleOAuthProvider clientId="923508787768-tirtvocpu20jrba6khna61ppbqjv3idj.apps.googleusercontent.com">
+      <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%)' }}>
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-md-10 col-lg-9">
