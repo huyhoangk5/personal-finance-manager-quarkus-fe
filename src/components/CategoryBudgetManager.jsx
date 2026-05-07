@@ -374,9 +374,9 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                 <tbody>
                   {incomeCategories.map((cat) => (
                     <tr key={cat.categoryId} className="bg-light bg-opacity-50 rounded-3 mb-2 border-bottom border-white">
-                      <td className="fw-bold py-3">{cat.categoryName}</td>
-                      <td className="text-end fw-bold text-success">{(incomeData[cat.categoryName] || 0).toLocaleString()}đ</td>
-                      <td className="text-center">
+                      <td data-label="Danh mục" className="fw-bold py-3">{cat.categoryName}</td>
+                      <td data-label="Tổng thu" className="text-end fw-bold text-success">{(incomeData[cat.categoryName] || 0).toLocaleString()}đ</td>
+                      <td data-label="Thao tác" className="text-center">
                         <div className="d-flex justify-content-center gap-1">
                           <button onClick={() => openEditModal(cat)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit3 size={14} /></button>
                           <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={14} /></button>
@@ -451,9 +451,9 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                             }}
                           />
                         </td>
-                        <td className="fw-bold py-3">{cat.categoryName}</td>
-                        <td className="text-end fw-bold">{cat.currentLimit.toLocaleString()}đ</td>
-                        <td className="text-end">
+                        <td data-label="Danh mục" className="fw-bold py-3">{cat.categoryName}</td>
+                        <td data-label="Hạn mức" className="text-end fw-bold">{cat.currentLimit.toLocaleString()}đ</td>
+                        <td data-label="Đã chi" className="text-end">
                           <div className="d-flex flex-column align-items-end">
                             <span className={`fw-bold ${percent > 100 ? 'text-danger' : 'text-main'}`}>{cat.spent.toLocaleString()}đ</span>
                             {cat.currentLimit > 0 && (
@@ -463,7 +463,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                             )}
                           </div>
                         </td>
-                        <td className="text-center">
+                        <td data-label="Thao tác" className="text-center">
                           <div className="d-flex justify-content-center gap-1">
                             <button onClick={() => openEditModal(cat)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit3 size={14} /></button>
                             <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={14} /></button>

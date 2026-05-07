@@ -154,8 +154,8 @@ const Login = () => {
                 <div className="card-body p-0">
                   <div className="row g-0">
                     {/* Cột bên trái: form đăng nhập */}
-                    <div className="col-md-6 p-5">
-                      <div className="text-center mb-5">
+                    <div className="col-md-6 p-4 p-md-5">
+                      <div className="text-center mb-4 mb-md-5">
                         <div className="bg-soft-blue rounded-circle d-inline-flex p-3 mb-3 text-primary-blue shadow-sm">
                           <Wallet size={42} />
                         </div>

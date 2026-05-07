@@ -253,17 +253,17 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
                         onChange={() => toggleSelectRow(t.transactionId)}
                       />
                     </td>
-                    <td className="small text-muted">{t.date}</td>
-                    <td>
+                    <td data-label="Ngày" className="small text-muted">{t.date}</td>
+                    <td data-label="Danh mục">
                       <span className={`badge ${t.type === 'THU' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'}`}>
                         {t.category?.categoryName || "Khác"}
                       </span>
                     </td>
-                    <td className={`text-end fw-bold ${t.type === 'THU' ? 'text-success' : 'text-danger'}`}>
+                    <td data-label="Số tiền" className={`text-end fw-bold ${t.type === 'THU' ? 'text-success' : 'text-danger'}`}>
                       {t.type === 'THU' ? '+' : '-'}{(t.amount || 0).toLocaleString()}
                     </td>
-                    <td className="text-main small">{t.note || '-'}</td>
-                    <td className="text-center">
+                    <td data-label="Ghi chú" className="text-main small">{t.note || '-'}</td>
+                    <td data-label="Thao tác" className="text-center">
                       <div className="d-flex justify-content-center gap-1">
                         <button onClick={() => onEdit(t)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit size={16} /></button>
                         <button onClick={() => confirmDelete(t.transactionId)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={16} /></button>

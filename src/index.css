@@ -373,6 +373,72 @@ h1, h2, h3, h4, h5, h6 {
   }
   .main-content-with-sidebar {
     margin-left: 80px;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar-premium {
+    width: 100%;
+    height: 70px;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    padding: 0 10px;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  }
+  
+  .sidebar-brand, .sidebar-footer, .user-profile-sidebar {
+    display: none !important;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0;
+  }
+  
+  .sidebar-link {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    height: auto;
+    width: auto;
+    color: rgba(255,255,255,0.6) !important;
+  }
+  
+  .sidebar-link span {
+    display: block;
+    font-size: 0.65rem;
+  }
+  
+  .sidebar-link.active {
+    background: transparent;
+    color: white !important;
+    box-shadow: none;
+  }
+  
+  .sidebar-link svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .main-content-with-sidebar {
+    margin-left: 0;
+    padding: 1rem;
+    padding-bottom: 100px;
+  }
+  
+  header.mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
   }
 }
 
@@ -571,6 +637,64 @@ h1, h2, h3, h4, h5, h6 {
   }
   .user-details-grid .col-sm-4 {
     margin-bottom: 4px;
+  }
+  
+  .avatar-container-premium div {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .avatar-container-premium svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .card-body.p-md-5 {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Global Table Responsiveness */
+.table-responsive {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
+}
+
+@media (max-width: 768px) {
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody tr {
+    display: block;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0 !important;
+    border: none !important;
+    text-align: right;
+  }
+  
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: left;
+  }
+  
+  .table td:last-child {
+    justify-content: center;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color) !important;
+    padding-top: 1rem !important;
   }
 }
 
