@@ -22,6 +22,7 @@ const Dashboard = () => {
 
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(new Date().toISOString().slice(0, 7));
 
   const fetchBalance = async () => {
     if (!user) return;
