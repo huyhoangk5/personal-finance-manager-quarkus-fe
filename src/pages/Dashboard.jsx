@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle, Settings, Edit } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
@@ -8,6 +8,8 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import CategoryBudgetManager from '../components/CategoryBudgetManager';
 import MonthlyCalendar from '../components/MonthlyCalendar';
+import EditProfileModal from '../components/EditProfileModal';
+import SettingsModal from '../components/SettingsModal';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('transactions');
@@ -18,7 +20,8 @@ const Dashboard = () => {
   const { user, login, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [calendarMonth, setCalendarMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const fetchBalance = async () => {
     if (!user) return;
@@ -43,6 +46,10 @@ const Dashboard = () => {
 
   const handleTransactionSaved = () => {
     setRefreshKey(prev => prev + 1);
+  };
+
+  const handleProfileUpdated = (updatedUser) => {
+    login(updatedUser);
   };
 
   if (!user) return null;
@@ -111,22 +118,19 @@ const Dashboard = () => {
             <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
             <p className="text-muted mb-0">Chào mừng bạn trở lại, {user.fullName || user.username}!</p>
           </div>
-          <button onClick={() => { setEditingTransaction(null); setModalOpen(true); }} className="btn btn-primary-blue d-flex align-items-center gap-2 shadow-sm px-4">
-            <PlusCircle size={20} /> Thêm nhanh
-          </button>
         </header>
 
         {/* Dashboard Overview Cards */}
         <div className="row g-4 mb-5">
           <div className="col-md-4">
-            <div className="card border-0 shadow-lg p-4 bg-primary-blue text-white h-100">
+            <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-primary border-4">
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <small className="text-white-50 fw-bold letter-spacing-1">SỐ DƯ HIỆN TẠI</small>
-                <div className="bg-white bg-opacity-20 p-2 rounded-circle">
+                <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ HIỆN TẠI</small>
+                <div className="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
                   <Wallet size={20} />
                 </div>
               </div>
-              <h2 className="fw-bold mb-0 text-white">
+              <h2 className="fw-bold mb-0 text-dark">
                 {(balance.balance || 0).toLocaleString()} <small className="fs-6 fw-normal opacity-75">VND</small>
               </h2>
             </div>
@@ -206,17 +210,21 @@ const Dashboard = () => {
                  </div>
                  <h2 className="fw-bold text-dark">{user.fullName || user.username}</h2>
                  <p className="text-muted mb-4">{user.email || 'Chưa cập nhật email'}</p>
+                 
+                 <div className="d-flex justify-content-center gap-3 mb-5">
+                    <button onClick={() => setShowEditProfile(true)} className="btn btn-outline-primary d-flex align-items-center gap-2">
+                      <Edit size={18} /> Chỉnh sửa hồ sơ
+                    </button>
+                    <button onClick={() => setShowSettings(true)} className="btn btn-primary-blue d-flex align-items-center gap-2 shadow-sm">
+                      <Settings size={18} /> Cài đặt & Bảo mật
+                    </button>
+                 </div>
+
                  <hr className="w-50 mx-auto mb-4" />
+                 
                  <div className="row justify-content-center">
-                    <div className="col-md-6 text-start">
-                       <div className="mb-3">
-                          <label className="small fw-bold text-muted text-uppercase">Tên đăng nhập</label>
-                          <div className="fw-bold text-dark">{user.username}</div>
-                       </div>
-                       <div className="mb-3">
-                          <label className="small fw-bold text-muted text-uppercase">ID Người dùng</label>
-                          <div className="fw-bold text-dark">#{user.userId}</div>
-                       </div>
+                    <div className="col-md-6 text-muted small">
+                       <p>Quản lý thông tin cá nhân và cài đặt bảo mật của bạn để bảo vệ tài khoản tốt hơn.</p>
                     </div>
                  </div>
               </div>
@@ -226,6 +234,17 @@ const Dashboard = () => {
       </main>
 
       <TransactionFormModal userId={user.userId} show={modalOpen} onClose={() => setModalOpen(false)} onTransactionAdded={handleTransactionSaved} editData={editingTransaction} />
+      
+      <EditProfileModal
+        show={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+        user={user}
+        onUpdate={handleProfileUpdated}
+      />
+      <SettingsModal
+        show={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 };

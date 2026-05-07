@@ -387,3 +387,27 @@ h1, h2, h3, h4, h5, h6 {
 .card p {
   color: #475569 !important;
 }
+
+/* Search Bar Focus Effect */
+.premium-search-group {
+  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.premium-search-group:focus-within {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15);
+}
+
+.premium-search-group .input-group-text, 
+.premium-search-group .form-control {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.premium-search-group:focus-within .input-group-text {
+  color: var(--primary-blue) !important;
+}
+

@@ -180,11 +180,11 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
             )}
           </div>
           <div className="d-flex gap-2 flex-grow-1 justify-content-end max-w-400">
-            <div className="input-group input-group-sm">
-              <span className="input-group-text bg-light border-end-0"><Search size={16} className="text-muted" /></span>
+            <div className="input-group input-group-sm premium-search-group bg-light">
+              <span className="input-group-text bg-transparent"><Search size={16} className="text-muted" /></span>
               <input
                 type="text"
-                className="form-control border-start-0 bg-light"
+                className="form-control bg-transparent"
                 placeholder="Tìm theo ghi chú..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

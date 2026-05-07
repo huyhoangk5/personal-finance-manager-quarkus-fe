@@ -355,15 +355,17 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
       <div className="row g-4 mt-2">
         <div className="col-lg-5">
-          <div className="p-4 bg-soft-blue bg-opacity-10 rounded-4 h-100">
-            <h6 className="mb-4 text-primary-blue fw-bold d-flex align-items-center gap-2">
-              <div className="p-1 bg-primary-blue rounded-circle text-white"><ArrowUp size={14} /></div>
+          <div className="p-4 bg-white rounded-4 h-100 shadow-sm border border-light">
+            <h6 className="mb-4 text-dark fw-bold d-flex align-items-center gap-2">
+              <div className="p-1 bg-success rounded-circle text-white" style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
+              </div>
               Thu nhập tháng này
             </h6>
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
                 <thead>
-                  <tr className="text-muted small">
+                  <tr className="text-dark small fw-bold">
                     <th>DANH MỤC</th>
                     <th className="text-end">TỔNG THU</th>
                     <th className="text-center">#</th>
@@ -371,7 +373,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                 </thead>
                 <tbody>
                   {incomeCategories.map((cat) => (
-                    <tr key={cat.categoryId} className="bg-white rounded-3 mb-2 shadow-sm border-bottom border-white">
+                    <tr key={cat.categoryId} className="bg-light bg-opacity-50 rounded-3 mb-2 border-bottom border-white">
                       <td className="fw-bold py-3">{cat.categoryName}</td>
                       <td className="text-end fw-bold text-success">{(incomeData[cat.categoryName] || 0).toLocaleString()}đ</td>
                       <td className="text-center">
@@ -390,10 +392,12 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
         </div>
 
         <div className="col-lg-7">
-          <div className="p-4 bg-light bg-opacity-50 rounded-4 h-100 border border-light">
+          <div className="p-4 bg-white rounded-4 h-100 shadow-sm border border-light">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h6 className="mb-0 text-danger fw-bold d-flex align-items-center gap-2">
-                <div className="p-1 bg-danger rounded-circle text-white"><ArrowDown size={14} /></div>
+              <h6 className="mb-0 text-dark fw-bold d-flex align-items-center gap-2">
+                <div className="p-1 bg-danger rounded-circle text-white" style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
+                </div>
                 Chi tiêu & Hạn mức
               </h6>
               {selectedExpenseIds.size > 0 && (
@@ -405,7 +409,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
                 <thead>
-                  <tr className="text-muted small">
+                  <tr className="text-dark small fw-bold">
                     <th style={{ width: '30px' }}>
                       <input
                         type="checkbox"
@@ -430,7 +434,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                   {sortedExpenseData.map((cat) => {
                     const percent = cat.currentLimit > 0 ? (cat.spent / cat.currentLimit) * 100 : 0;
                     return (
-                      <tr key={cat.categoryId} className="bg-white rounded-3 shadow-sm border-bottom border-white">
+                      <tr key={cat.categoryId} className="bg-light bg-opacity-50 rounded-3 border-bottom border-white">
                         <td>
                           <input
                             type="checkbox"
