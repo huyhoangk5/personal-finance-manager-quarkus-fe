@@ -290,24 +290,33 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   };
 
   return (
-    <div className="card border-0 shadow-sm p-4 rounded-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h5 className="fw-bold m-0 d-flex align-items-center gap-2">Ngân sách hàng tháng</h5>
+    <div className="bg-white">
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h5 className="fw-bold m-0 text-main">Ngân sách & Danh mục</h5>
+          <p className="text-muted small m-0">Quản lý hạn mức chi tiêu hàng tháng</p>
+        </div>
         <div className="d-flex gap-2">
-          <button onClick={handleCopyLastMonth} className="btn btn-outline-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"><Copy size={16} /> Sao chép hạn mức tháng trước</button>
-          <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm d-flex align-items-center gap-1"><PlusCircle size={16} /> Thêm danh mục</button>
+          <button onClick={handleCopyLastMonth} className="btn btn-light btn-sm d-flex align-items-center gap-2">
+            <Copy size={16} /> Sao chép tháng trước
+          </button>
+          <button onClick={() => setShowForm(!showForm)} className={`btn btn-sm d-flex align-items-center gap-2 ${showForm ? 'btn-light' : 'btn-primary'}`}>
+            {showForm ? <X size={16} /> : <PlusCircle size={16} />} 
+            {showForm ? 'Hủy bỏ' : 'Thêm danh mục'}
+          </button>
         </div>
       </div>
 
       {showForm && (
-        <div className="mb-4 p-3 border rounded bg-light">
-          <form onSubmit={handleCreateCategory} className="row g-2 align-items-end">
+        <div className="mb-4 p-4 bg-light rounded-3 transition-all border-0">
+          <h6 className="fw-bold mb-3 small text-uppercase text-muted">Tạo danh mục mới</h6>
+          <form onSubmit={handleCreateCategory} className="row g-3 align-items-end">
             <div className="col-md-4">
-              <label className="form-label small">Tên danh mục</label>
-              <input type="text" className="form-control" value={newName} onChange={e => setNewName(e.target.value)} required />
+              <label className="form-label small fw-bold">Tên danh mục</label>
+              <input type="text" className="form-control" placeholder="Tên danh mục..." value={newName} onChange={e => setNewName(e.target.value)} required />
             </div>
             <div className="col-md-3">
-              <label className="form-label small">Loại</label>
+              <label className="form-label small fw-bold">Loại</label>
               <select className="form-select" value={newType} onChange={e => setNewType(e.target.value)}>
                 <option value="THU">Thu nhập</option>
                 <option value="CHI">Chi tiêu</option>
@@ -315,20 +324,20 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             </div>
             {newType === 'CHI' && (
               <div className="col-md-3">
-                <label className="form-label small">Hạn mức (VND)</label>
+                <label className="form-label small fw-bold">Hạn mức (VND)</label>
                 <div className="position-relative">
                   <input
                     type="number"
                     className="form-control no-arrows"
-                    placeholder="VD: 5000000"
+                    placeholder="VD: 5,000,000"
                     value={newLimit}
                     onChange={handleNewLimitChange}
                     onBlur={() => setTimeout(() => setShowNewLimitSuggestions(false), 200)}
                   />
                   {showNewLimitSuggestions && newLimitSuggestions.length > 0 && (
-                    <div className="position-absolute top-100 start-0 mt-1 w-100 bg-white border rounded shadow-sm z-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                    <div className="position-absolute top-100 start-0 mt-1 w-100 bg-white border-0 shadow-lg rounded-3 z-3 overflow-hidden">
                       {newLimitSuggestions.map((sug, idx) => (
-                        <div key={idx} className="p-2 hover-bg-light cursor-pointer" style={{ cursor: 'pointer' }} onMouseDown={() => selectNewLimitSuggestion(sug)}>
+                        <div key={idx} className="p-2 hover-bg-light cursor-pointer small border-bottom" onMouseDown={() => selectNewLimitSuggestion(sug)}>
                           {sug.toLocaleString('vi-VN')}đ
                         </div>
                       ))}
@@ -337,57 +346,70 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                 </div>
               </div>
             )}
-            <div className="col-md-2"><button type="submit" className="btn btn-success w-100">Lưu</button></div>
+            <div className="col-md-2">
+              <button type="submit" className="btn btn-primary w-100 py-2">Lưu lại</button>
+            </div>
           </form>
-          <center><button onClick={() => setShowForm(false)} className="btn btn-link btn-sm text-muted mt-2">Hủy</button></center>
         </div>
       )}
 
-      <div className="row g-4">
-        <div className="col-md-5">
-          <div className="border rounded-3 p-3 h-100 bg-light bg-opacity-50">
-            <h6 className="mb-3 text-success fw-bold">💰 Thu nhập</h6>
+      <div className="row g-4 mt-2">
+        <div className="col-lg-5">
+          <div className="p-4 bg-soft-blue bg-opacity-10 rounded-4 h-100">
+            <h6 className="mb-4 text-primary-blue fw-bold d-flex align-items-center gap-2">
+              <div className="p-1 bg-primary-blue rounded-circle text-white"><ArrowUp size={14} /></div>
+              Thu nhập tháng này
+            </h6>
             <div className="table-responsive">
-              <table className="table table-sm align-middle mb-0">
-                <thead className="small text-muted">
-                  <tr><th style={{ width: '50px' }}>STT</th><th>Tên danh mục</th><th className="text-end">Tổng thu tháng này</th><th className="text-center" style={{ width: '70px' }}>Thao tác</th></tr>
+              <table className="table table-borderless align-middle">
+                <thead>
+                  <tr className="text-muted small">
+                    <th>DANH MỤC</th>
+                    <th className="text-end">TỔNG THU</th>
+                    <th className="text-center">#</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {incomeCategories.map((cat, idx) => (
-                    <tr key={cat.categoryId}>
-                      <td className="text-center">{idx+1}</td>
-                      <td className="fw-bold">{cat.categoryName}</td>
+                  {incomeCategories.map((cat) => (
+                    <tr key={cat.categoryId} className="bg-white rounded-3 mb-2 shadow-sm border-bottom border-white">
+                      <td className="fw-bold py-3">{cat.categoryName}</td>
                       <td className="text-end fw-bold text-success">{(incomeData[cat.categoryName] || 0).toLocaleString()}đ</td>
                       <td className="text-center">
-                        <button onClick={() => openEditModal(cat)} className="btn btn-link text-primary p-0 me-1"><Edit3 size={14} /></button>
-                        <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-link text-danger p-0"><Trash2 size={14} /></button>
+                        <div className="d-flex justify-content-center gap-1">
+                          <button onClick={() => openEditModal(cat)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit3 size={14} /></button>
+                          <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={14} /></button>
+                        </div>
                       </td>
                     </tr>
                   ))}
-                  {incomeCategories.length === 0 && <tr><td colSpan="4" className="text-center text-muted py-2">Chưa có danh mục thu nhập</td></tr>}
+                  {incomeCategories.length === 0 && <tr><td colSpan="3" className="text-center text-muted py-5 small">Chưa có danh mục thu nhập</td></tr>}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <div className="col-md-7">
-          <div className="border rounded-3 p-3 h-100 bg-light bg-opacity-50">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <h6 className="mb-0 text-danger fw-bold">📊 Chi tiêu</h6>
+        <div className="col-lg-7">
+          <div className="p-4 bg-light bg-opacity-50 rounded-4 h-100 border border-light">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h6 className="mb-0 text-danger fw-bold d-flex align-items-center gap-2">
+                <div className="p-1 bg-danger rounded-circle text-white"><ArrowDown size={14} /></div>
+                Chi tiêu & Hạn mức
+              </h6>
               {selectedExpenseIds.size > 0 && (
-                <button onClick={deleteSelectedExpenses} className="btn btn-sm btn-danger">
-                  Xóa đã chọn ({selectedExpenseIds.size})
+                <button onClick={deleteSelectedExpenses} className="btn btn-sm btn-danger shadow-sm">
+                  Xóa {selectedExpenseIds.size} mục
                 </button>
               )}
             </div>
             <div className="table-responsive">
-              <table className="table table-sm align-middle mb-0">
-                <thead className="small text-muted">
-                  <tr>
+              <table className="table table-borderless align-middle">
+                <thead>
+                  <tr className="text-muted small">
                     <th style={{ width: '30px' }}>
                       <input
                         type="checkbox"
+                        className="form-check-input"
                         checked={selectedExpenseIds.size === expenseCategoriesRaw.length && expenseCategoriesRaw.length > 0}
                         onChange={() => {
                           if (selectedExpenseIds.size === expenseCategoriesRaw.length) {
@@ -398,22 +420,21 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                         }}
                       />
                     </th>
-                    <th style={{ width: '50px' }}>STT</th>
-                    <th>Tên danh mục</th>
-                    <th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>Hạn mức {getSortIcon('limit')}</th>
-                    <th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>Đã chi {getSortIcon('spent')}</th>
-                    <th className="text-center">Trạng thái</th>
-                    <th className="text-center" style={{ width: '70px' }}>Thao tác</th>
+                    <th>DANH MỤC</th>
+                    <th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>HẠN MỨC {getSortIcon('limit')}</th>
+                    <th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>ĐÃ CHI {getSortIcon('spent')}</th>
+                    <th className="text-center">#</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedExpenseData.map((cat, idx) => {
+                  {sortedExpenseData.map((cat) => {
                     const percent = cat.currentLimit > 0 ? (cat.spent / cat.currentLimit) * 100 : 0;
                     return (
-                      <tr key={cat.categoryId}>
+                      <tr key={cat.categoryId} className="bg-white rounded-3 shadow-sm border-bottom border-white">
                         <td>
                           <input
                             type="checkbox"
+                            className="form-check-input"
                             checked={selectedExpenseIds.has(cat.categoryId)}
                             onChange={() => {
                               const newSelected = new Set(selectedExpenseIds);
@@ -426,23 +447,28 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                             }}
                           />
                         </td>
-                        <td className="text-center">{idx+1}</td>
-                        <td className="fw-bold">{cat.categoryName}</td>
-                        <td className="text-end"><span className="fw-bold">{cat.currentLimit.toLocaleString()}đ</span></td>
+                        <td className="fw-bold py-3">{cat.categoryName}</td>
+                        <td className="text-end fw-bold">{cat.currentLimit.toLocaleString()}đ</td>
                         <td className="text-end">
-                          <div><span className="fw-bold">{cat.spent.toLocaleString()}đ</span>
-                            {cat.currentLimit > 0 && <div className="progress mt-1" style={{ height: '4px' }}><div className={`progress-bar ${percent > 100 ? 'bg-danger' : percent > 80 ? 'bg-warning' : 'bg-success'}`} style={{ width: `${Math.min(percent,100)}%` }}></div></div>}
+                          <div className="d-flex flex-column align-items-end">
+                            <span className={`fw-bold ${percent > 100 ? 'text-danger' : 'text-main'}`}>{cat.spent.toLocaleString()}đ</span>
+                            {cat.currentLimit > 0 && (
+                              <div className="progress w-100 mt-1" style={{ height: '6px', maxWidth: '100px' }}>
+                                <div className={`progress-bar ${percent > 100 ? 'bg-danger' : percent > 80 ? 'bg-warning' : 'bg-primary-blue'}`} style={{ width: `${Math.min(percent, 100)}%` }}></div>
+                              </div>
+                            )}
                           </div>
                         </td>
-                        <td className="text-center">{cat.status ? <span className={`badge ${cat.status.class} px-2 py-1`}>{cat.status.text}</span> : <span className="badge bg-success px-2 py-1">Bình thường</span>}</td>
                         <td className="text-center">
-                          <button onClick={() => openEditModal(cat)} className="btn btn-link text-primary p-0 me-1"><Edit3 size={14} /></button>
-                          <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-link text-danger p-0"><Trash2 size={14} /></button>
+                          <div className="d-flex justify-content-center gap-1">
+                            <button onClick={() => openEditModal(cat)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit3 size={14} /></button>
+                            <button onClick={() => confirmDelete(cat.categoryId, cat.categoryName)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={14} /></button>
+                          </div>
                         </td>
                       </tr>
                     );
                   })}
-                  {expenseCategoriesRaw.length === 0 && <tr><td colSpan="7" className="text-center text-muted py-2">Chưa có danh mục chi tiêu</td></tr>}
+                  {expenseCategoriesRaw.length === 0 && <tr><td colSpan="5" className="text-center text-muted py-5 small">Chưa có danh mục chi tiêu</td></tr>}
                 </tbody>
               </table>
             </div>

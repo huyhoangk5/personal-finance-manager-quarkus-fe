@@ -163,62 +163,60 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
 
   return (
     <>
-      <div className="card border-0 shadow-sm p-4 rounded-4 bg-white">
-        <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div className="p-4 bg-white">
+        <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
           <div className="d-flex gap-2">
-            <button onClick={onAdd} className="btn btn-primary d-flex align-items-center gap-2 rounded-3 px-3 shadow-sm">
-              <PlusCircle size={20} /> Thêm giao dịch
+            <button onClick={onAdd} className="btn btn-primary d-flex align-items-center gap-2 shadow-sm">
+              <PlusCircle size={18} /> Thêm giao dịch
             </button>
             {selectedRows.size > 0 && (
               <button
                 onClick={deleteSelected}
-                className="btn btn-danger d-flex align-items-center gap-2 rounded-3 px-3 shadow-sm"
+                className="btn btn-outline-danger d-flex align-items-center gap-2"
                 disabled={isDeletingMultiple}
               >
-                <Trash2 size={20} /> Xóa đã chọn ({selectedRows.size})
+                <Trash2 size={18} /> Xóa đã chọn ({selectedRows.size})
               </button>
             )}
           </div>
-          <div className="d-flex gap-2">
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              placeholder="Tìm theo ghi chú..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && applyFiltersAndSort()}
-            />
-            <button className="btn btn-sm btn-outline-secondary" onClick={() => setShowFilters(!showFilters)}>
+          <div className="d-flex gap-2 flex-grow-1 justify-content-end max-w-400">
+            <div className="input-group input-group-sm">
+              <span className="input-group-text bg-light border-end-0"><Search size={16} className="text-muted" /></span>
+              <input
+                type="text"
+                className="form-control border-start-0 bg-light"
+                placeholder="Tìm theo ghi chú..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button className={`btn btn-sm ${showFilters ? 'btn-primary-blue' : 'btn-light'}`} onClick={() => setShowFilters(!showFilters)}>
               <Filter size={16} /> Lọc
             </button>
           </div>
         </div>
 
         {showFilters && (
-          <div className="mb-4 p-3 border rounded bg-light">
+          <div className="mb-4 p-4 border-0 bg-light rounded-3 transition-all">
             <div className="row g-3">
               <div className="col-md-3">
-                <label className="form-label small">Loại giao dịch</label>
-                <select className="form-select" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+                <label className="form-label small fw-bold text-muted">LOẠI GIAO DỊCH</label>
+                <select className="form-select form-select-sm" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
                   <option value="all">Tất cả</option>
                   <option value="THU">Thu nhập</option>
                   <option value="CHI">Chi tiêu</option>
                 </select>
               </div>
               <div className="col-md-3">
-                <label className="form-label small">Từ ngày</label>
-                <div className="input-group">
-                  <input type="date" className="form-control" value={startDate} onChange={e => setStartDate(e.target.value)} id="filter-start-date" />
-                </div>
+                <label className="form-label small fw-bold text-muted">TỪ NGÀY</label>
+                <input type="date" className="form-control form-control-sm" value={startDate} onChange={e => setStartDate(e.target.value)} />
               </div>
               <div className="col-md-3">
-                <label className="form-label small">Đến ngày</label>
-                <div className="input-group">
-                  <input type="date" className="form-control" value={endDate} onChange={e => setEndDate(e.target.value)} id="filter-end-date" />
-                </div>
+                <label className="form-label small fw-bold text-muted">ĐẾN NGÀY</label>
+                <input type="date" className="form-control form-control-sm" value={endDate} onChange={e => setEndDate(e.target.value)} />
               </div>
               <div className="col-md-3 d-flex align-items-end">
-                <button className="btn btn-secondary btn-sm w-100" onClick={resetFilters}>Xóa bộ lọc</button>
+                <button className="btn btn-light btn-sm w-100" onClick={resetFilters}>Làm mới</button>
               </div>
             </div>
           </div>
@@ -226,11 +224,12 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
 
         <div className="table-responsive">
           <table className="table table-hover align-middle">
-            <thead className="small text-muted">
+            <thead>
               <tr>
-                <th style={{ width: '30px' }}>
+                <th style={{ width: '40px' }}>
                   <input
                     type="checkbox"
+                    className="form-check-input"
                     checked={selectedRows.size === filteredTransactions.length && filteredTransactions.length > 0}
                     onChange={toggleSelectAll}
                   />
@@ -245,37 +244,41 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
             <tbody>
               {filteredTransactions.length > 0 ? (
                 filteredTransactions.map((t) => (
-                  <tr key={t.transactionId}>
+                  <tr key={t.transactionId} className="transition-all">
                     <td>
                       <input
                         type="checkbox"
+                        className="form-check-input"
                         checked={selectedRows.has(t.transactionId)}
                         onChange={() => toggleSelectRow(t.transactionId)}
                       />
                     </td>
-                    <td className="small">{t.date}  </td>
+                    <td className="small text-muted">{t.date}</td>
                     <td>
-                      <span className={`badge rounded-pill ${t.type === 'THU' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>
-                        {t.category?.categoryName || "Chưa phân loại"}
+                      <span className={`badge ${t.type === 'THU' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'}`}>
+                        {t.category?.categoryName || "Khác"}
                       </span>
                     </td>
                     <td className={`text-end fw-bold ${t.type === 'THU' ? 'text-success' : 'text-danger'}`}>
                       {t.type === 'THU' ? '+' : '-'}{(t.amount || 0).toLocaleString()}
                     </td>
-                    <td className="text-dark small">{t.note || '-'}</td>
+                    <td className="text-main small">{t.note || '-'}</td>
                     <td className="text-center">
-                      <button onClick={() => onEdit(t)} className="btn btn-link text-primary p-1"><Edit size={16} /></button>
-                      <button onClick={() => confirmDelete(t.transactionId)} className="btn btn-link text-danger p-1"><Trash2 size={16} /></button>
+                      <div className="d-flex justify-content-center gap-1">
+                        <button onClick={() => onEdit(t)} className="btn btn-sm btn-light text-primary-blue p-2"><Edit size={16} /></button>
+                        <button onClick={() => confirmDelete(t.transactionId)} className="btn btn-sm btn-light text-danger p-2"><Trash2 size={16} /></button>
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="6" className="text-center py-4 text-muted">Không có giao dịch phù hợp</td></tr>
+                <tr><td colSpan="6" className="text-center py-5 text-muted">Không tìm thấy giao dịch nào</td></tr>
               )}
             </tbody>
-        </table>
+          </table>
         </div>
       </div>
+
 
       <ConfirmationModal
         show={deleteTarget !== null}

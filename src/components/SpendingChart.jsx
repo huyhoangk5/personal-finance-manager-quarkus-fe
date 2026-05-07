@@ -30,13 +30,13 @@ const SpendingChart = ({ userId }) => {
   const getThemeColors = () => {
     const isDark = theme === 'dark';
     return {
-      textColor: isDark ? '#f8f9fa' : '#212529',
-      gridColor: isDark ? '#4a4a4a' : '#e0e0e0',
-      legendColor: isDark ? '#e9ecef' : '#333',
-      tooltipBackground: isDark ? '#2c2c2c' : '#ffffff',
-      tooltipTitleColor: isDark ? '#f8f9fa' : '#212529',
-      tooltipBodyColor: isDark ? '#adb5bd' : '#555',
-      axisColor: isDark ? '#adb5bd' : '#555'
+      textColor: isDark ? '#f1f5f9' : '#0f172a',
+      gridColor: isDark ? '#1e293b' : '#e2e8f0',
+      legendColor: isDark ? '#94a3b8' : '#64748b',
+      tooltipBackground: isDark ? '#0f172a' : '#ffffff',
+      tooltipTitleColor: isDark ? '#f1f5f9' : '#0f172a',
+      tooltipBodyColor: isDark ? '#94a3b8' : '#64748b',
+      axisColor: isDark ? '#94a3b8' : '#64748b'
     };
   };
 
@@ -52,9 +52,9 @@ const SpendingChart = ({ userId }) => {
         labels: Object.keys(rawPie),
         datasets: [{
           data: Object.values(rawPie),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'],
-          borderWidth: 1,
-          borderColor: '#fff'
+          backgroundColor: ['#0077b6', '#00b4d8', '#03045e', '#10b981', '#ef4444', '#f59e0b', '#64748b'],
+          borderWidth: 2,
+          borderColor: theme === 'dark' ? '#0f172a' : '#fff'
         }]
       });
 
@@ -70,18 +70,18 @@ const SpendingChart = ({ userId }) => {
           {
             label: 'Thu nhập',
             data: incomes,
-            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-            borderColor: 'rgb(40, 167, 69)',
-            borderWidth: 2,
-            borderRadius: 4
+            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+            borderColor: '#10b981',
+            borderWidth: 0,
+            borderRadius: 6
           },
           {
             label: 'Chi tiêu',
             data: expenses,
-            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-            borderColor: 'rgb(220, 53, 69)',
-            borderWidth: 2,
-            borderRadius: 4
+            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+            borderColor: '#ef4444',
+            borderWidth: 0,
+            borderRadius: 6
           }
         ]
       });
@@ -91,14 +91,14 @@ const SpendingChart = ({ userId }) => {
         datasets: [{
           label: 'Số dư',
           data: balanceData,
-          borderColor: 'rgb(0, 123, 255)',
-          backgroundColor: 'rgba(0, 123, 255, 0.15)',
+          borderColor: '#0077b6',
+          backgroundColor: 'rgba(0, 119, 182, 0.1)',
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: 'rgb(0, 123, 255)',
+          pointBackgroundColor: '#0077b6',
           pointBorderColor: '#fff',
-          pointRadius: 4,
-          pointHoverRadius: 6
+          pointRadius: 5,
+          pointHoverRadius: 7
         }]
       });
 
@@ -124,23 +124,26 @@ const SpendingChart = ({ userId }) => {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          labels: { color: colors.legendColor, font: { size: 12 } }
+          position: 'top',
+          labels: { color: colors.legendColor, font: { size: 12, weight: '600' }, usePointStyle: true, padding: 20 }
         },
         tooltip: {
           backgroundColor: colors.tooltipBackground,
           titleColor: colors.tooltipTitleColor,
           bodyColor: colors.tooltipBodyColor,
           borderColor: colors.gridColor,
-          borderWidth: 1
+          borderWidth: 1,
+          padding: 12,
+          boxPadding: 8
         }
       },
       scales: {
         y: {
-          ticks: { color: colors.axisColor, stepSize: 1000000, callback: (val) => val.toLocaleString() },
-          grid: { color: colors.gridColor }
+          ticks: { color: colors.axisColor, font: { size: 11 }, callback: (val) => val.toLocaleString() },
+          grid: { color: colors.gridColor, drawBorder: false }
         },
         x: {
-          ticks: { color: colors.axisColor },
+          ticks: { color: colors.axisColor, font: { size: 11 } },
           grid: { display: false }
         }
       }
@@ -154,60 +157,56 @@ const SpendingChart = ({ userId }) => {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          labels: { color: colors.legendColor, font: { size: 12 } }
+          position: 'right',
+          labels: { color: colors.legendColor, font: { size: 11, weight: '500' }, usePointStyle: true, padding: 15 }
         },
         tooltip: {
           backgroundColor: colors.tooltipBackground,
           titleColor: colors.tooltipTitleColor,
           bodyColor: colors.tooltipBodyColor,
+          padding: 12,
           callbacks: {
             label: (context) => {
               const label = context.label || '';
               const value = context.raw || 0;
               const total = context.dataset.data.reduce((a, b) => a + b, 0);
               const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-              return `${label}: ${value.toLocaleString()}đ (${percentage}%)`;
+              return ` ${label}: ${value.toLocaleString()}đ (${percentage}%)`;
             }
           }
-        }
-      }
-    };
-  };
-
-  if (loading) return <div className="text-center p-5">Đang tải dữ liệu thống kê...</div>;
+    if (loading) return <div className="text-center p-5 text-muted">Đang phân tích dữ liệu tài chính...</div>;
 
   return (
-    <div className="container mt-4">
+    <div className="container py-2">
       <div className="row g-4">
-        <div className="col-md-6">
-          <div className="card shadow p-3 h-100">
-            <h5 className="text-center mb-3">Cơ cấu chi tiêu trong tháng</h5>
-            <div style={{ maxHeight: '300px' }} className="d-flex justify-content-center">
+        <div className="col-lg-7">
+          <div className="card border-0 bg-white p-4 h-100 shadow-sm">
+            <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Cơ cấu chi tiêu tháng này</h6>
+            <div style={{ height: '320px' }}>
               {pieData && <Pie key={theme} data={pieData} options={pieOptions()} />}
             </div>
           </div>
         </div>
 
-        <div className="col-md-6">
-          <div className="card shadow p-3 h-100">
-            <h5 className="text-center mb-3">Top danh mục chi tiêu trong tháng</h5>
+        <div className="col-lg-5">
+          <div className="card border-0 bg-white p-4 h-100 shadow-sm">
+            <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Top danh mục chi tiêu</h6>
             <div className="table-responsive">
-              <table className="table table-sm">
-                <thead>
-                  <tr>
-                    <th>Danh mục</th>
-                    <th className="text-end">Số tiền</th>
-                  </tr>
-                </thead>
+              <table className="table table-borderless align-middle">
                 <tbody>
                   {topCategories.map((item, idx) => (
                     <tr key={idx}>
-                      <td>{item.category}</td>
-                      <td className="text-end fw-bold">{(item.amount || 0).toLocaleString()}đ</td>
+                      <td className="ps-0">
+                        <div className="d-flex align-items-center gap-2">
+                          <div className="p-2 rounded-3" style={{ width: '8px', height: '32px', backgroundColor: ['#0077b6', '#00b4d8', '#03045e', '#10b981', '#ef4444'][idx % 5] }}></div>
+                          <span className="fw-semibold">{item.category}</span>
+                        </div>
+                      </td>
+                      <td className="text-end fw-bold">{(item.amount || 0).toLocaleString()} <small className="text-muted fw-normal">VND</small></td>
                     </tr>
                   ))}
                   {topCategories.length === 0 && (
-                    <tr><td colSpan="2" className="text-center text-muted">Chưa có dữ liệu chi tiêu tháng này</td></tr>
+                    <tr><td colSpan="2" className="text-center py-5 text-muted small">Chưa có dữ liệu giao dịch</td></tr>
                   )}
                 </tbody>
               </table>
@@ -215,19 +214,19 @@ const SpendingChart = ({ userId }) => {
           </div>
         </div>
 
-        <div className="col-md-12">
-          <div className="card shadow p-3">
-            <h5 className="text-center mb-3">Thu nhập & Chi tiêu theo tháng</h5>
-            <div style={{ height: '400px' }}>
+        <div className="col-12">
+          <div className="card border-0 bg-white p-4 mt-2 shadow-sm">
+            <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">So sánh Thu nhập & Chi tiêu</h6>
+            <div style={{ height: '350px' }}>
               {barData && <Bar key={theme} data={barData} options={getChartOptions()} />}
             </div>
           </div>
         </div>
 
-        <div className="col-md-12">
-          <div className="card shadow p-3">
-            <h5 className="text-center mb-3">Xu hướng số dư</h5>
-            <div style={{ height: '400px' }}>
+        <div className="col-12">
+          <div className="card border-0 bg-white p-4 mt-2 shadow-sm">
+            <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Xu hướng số dư tài khoản</h6>
+            <div style={{ height: '350px' }}>
               {lineData && <Line key={theme} data={lineData} options={getChartOptions()} />}
             </div>
           </div>
@@ -237,4 +236,4 @@ const SpendingChart = ({ userId }) => {
   );
 };
 
-export default SpendingChart;
+export default SpendingChart;

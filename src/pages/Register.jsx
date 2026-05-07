@@ -91,97 +91,109 @@ const Register = () => {
 
   return (
     <GoogleOAuthProvider clientId="923508787768-tirtvocpu20jrba6khna61ppbqjv3idj.apps.googleusercontent.com">
-      <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%)' }}>
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-md-10 col-lg-8">
-              <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
-                <div className="card-body p-5">
-                  <div className="row">
+            <div className="col-md-10 col-lg-9">
+              <div className="card border-0 shadow-lg overflow-hidden" style={{ borderRadius: '24px' }}>
+                <div className="card-body p-0">
+                  <div className="row g-0">
                     {/* Cột bên trái: form đăng ký */}
-                    <div className="col-md-6">
-                      <div className="text-center mb-4">
-                        <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3"><Wallet size={48} className="text-primary" /></div>
-                        <h2 className="fw-bold">Finance Manager</h2>
-                        <p className="text-muted">Tạo tài khoản để bắt đầu</p>
+                    <div className="col-md-6 p-5">
+                      <div className="text-center mb-5">
+                        <div className="bg-soft-blue rounded-circle d-inline-flex p-3 mb-3 text-primary-blue shadow-sm">
+                          <Wallet size={42} />
+                        </div>
+                        <h2 className="fw-bold text-main">Tạo tài khoản</h2>
+                        <p className="text-muted small">Bắt đầu hành trình quản lý tài chính của bạn</p>
                       </div>
-                      {error && <div className="alert alert-danger alert-dismissible fade show" role="alert">{error}<button type="button" className="btn-close" onClick={() => setError('')}></button></div>}
-                      {success && <div className="alert alert-success alert-dismissible fade show" role="alert">{success}<button type="button" className="btn-close" onClick={() => setSuccess('')}></button></div>}
+
+                      {error && <div className="alert alert-danger border-0 small py-2">{error}</div>}
+                      {success && <div className="alert alert-success border-0 small py-2">{success}</div>}
+
                       <form onSubmit={handleSubmit}>
-                        <div className="mb-3"><label className="form-label fw-semibold">Tên đăng nhập</label><div className="input-group"><span className="input-group-text bg-light border-end-0"><Mail size={18} /></span><input type="text" className="form-control border-start-0 ps-0" placeholder="Nhập tên đăng nhập" value={username} onChange={e => setUsername(e.target.value)} required /></div></div>
-                        <div className="mb-3"><label className="form-label fw-semibold">Mật khẩu</label><div className="input-group"><span className="input-group-text bg-light border-end-0"><Lock size={18} /></span><input type="password" className="form-control border-start-0 ps-0" placeholder="Nhập mật khẩu" value={password} onChange={e => setPassword(e.target.value)} required /></div></div>
-                        <div className="mb-4"><label className="form-label fw-semibold">Xác nhận mật khẩu</label><div className="input-group"><span className="input-group-text bg-light border-end-0"><Lock size={18} /></span><input type="password" className="form-control border-start-0 ps-0" placeholder="Nhập lại mật khẩu" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /></div></div>
-                        <button type="submit" className="btn btn-primary w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" disabled={loading}>{loading ? <span className="spinner-border spinner-border-sm"></span> : <>Đăng ký <UserPlus size={18} /></>}</button>
+                        <div className="mb-3">
+                          <label className="form-label small fw-bold text-muted text-uppercase">Tên đăng nhập</label>
+                          <div className="input-group">
+                            <span className="input-group-text bg-light border-end-0 text-muted"><Mail size={18} /></span>
+                            <input type="text" className="form-control border-start-0 bg-light" placeholder="Nhập tên đăng nhập" value={username} onChange={e => setUsername(e.target.value)} required />
+                          </div>
+                        </div>
+                        <div className="mb-3">
+                          <label className="form-label small fw-bold text-muted text-uppercase">Mật khẩu</label>
+                          <div className="input-group">
+                            <span className="input-group-text bg-light border-end-0 text-muted"><Lock size={18} /></span>
+                            <input type="password" className="form-control border-start-0 bg-light" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                          </div>
+                        </div>
+                        <div className="mb-4">
+                          <label className="form-label small fw-bold text-muted text-uppercase">Xác nhận mật khẩu</label>
+                          <div className="input-group">
+                            <span className="input-group-text bg-light border-end-0 text-muted"><Lock size={18} /></span>
+                            <input type="password" className="form-control border-start-0 bg-light" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
+                          </div>
+                        </div>
+                        <button type="submit" className="btn btn-primary w-100 py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" disabled={loading}>
+                          {loading ? <span className="spinner-border spinner-border-sm"></span> : <>Đăng ký ngay <UserPlus size={18} /></>}
+                        </button>
                       </form>
 
                       <div className="text-center mt-4">
-                        <p className="text-muted small mb-3">Hoặc tiếp tục với:</p>
+                        <div className="d-flex align-items-center mb-4">
+                          <hr className="flex-grow-1" />
+                          <span className="px-3 text-muted small">Hoặc</span>
+                          <hr className="flex-grow-1" />
+                        </div>
                         <div className="d-grid gap-2">
-                          <div className="google-btn-wrapper">
+                          <div className="google-btn-wrapper w-100">
                             <GoogleLogin
                               onSuccess={handleGoogleSuccess}
                               onError={handleGoogleError}
                               theme="outline"
                               size="large"
-                              text="continue_with"
+                              text="signup_with"
                               width="100%"
                             />
                           </div>
-                          <button
-                            onClick={handleFacebookLogin}
-                            className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2"
-                          >
-                            <Facebook size={18} /> Đăng nhập bằng Facebook
-                          </button>
-                          <button
-                            onClick={() => setShowOtpForm(true)}
-                            className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2"
-                          >
-                            <Smartphone size={18} /> Đăng nhập bằng OTP (SMS)
-                          </button>
                         </div>
                       </div>
 
-                      {/* Form OTP (tạm thời ẩn, chỉ hiện khi bấm nút OTP) */}
-                      {showOtpForm && (
-                        <div className="mt-3">
-                          <h6 className="text-center mb-3">Đăng nhập bằng OTP</h6>
-                          {otpStep === 'send' ? (
-                            <div className="mb-3">
-                              <label className="form-label fw-semibold">Số điện thoại</label>
-                              <input type="tel" className="form-control" placeholder="Nhập số điện thoại" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
-                              <button className="btn btn-primary w-100 mt-3" onClick={handleSendOtp}>Gửi mã OTP</button>
-                            </div>
-                          ) : (
-                            <div>
-                              <label className="form-label fw-semibold">Mã OTP</label>
-                              <input type="text" className="form-control" placeholder="Nhập mã 6 số" value={otp} onChange={e => setOtp(e.target.value)} />
-                              <button className="btn btn-primary w-100 mt-3" onClick={handleVerifyOtp}>Xác nhận</button>
-                            </div>
-                          )}
-                          <button className="btn btn-link mt-2" onClick={() => { setShowOtpForm(false); setOtpStep('send'); setPhoneNumber(''); setOtp(''); }}>Quay lại</button>
-                        </div>
-                      )}
-
-                      <div className="text-center mt-4"><Link to="/login" className="text-decoration-none">Đã có tài khoản? <span className="fw-bold">Đăng nhập ngay</span></Link></div>
+                      <div className="text-center mt-5">
+                        <span className="text-muted small">Đã có tài khoản? </span>
+                        <Link to="/login" className="text-primary-blue text-decoration-none small fw-bold">Đăng nhập ngay</Link>
+                      </div>
                     </div>
 
-                    {/* Cột bên phải: QR code */}
-                    <div className="col-md-6 d-flex flex-column align-items-center justify-content-center border-start">
-                      <div className="text-center">
-                        <h5 className="fw-bold mb-3">Hoặc quét mã QR để đăng ký nhanh</h5>
+                    {/* Cột bên phải: QR code & Info */}
+                    <div className="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-light bg-opacity-50 border-start">
+                      <div className="text-center p-5">
+                        <h4 className="fw-bold mb-3">Đăng ký nhanh</h4>
+                        <p className="text-muted small mb-4">Quét mã QR để đăng ký tài khoản tức thì</p>
+                        
                         {qrLoading ? (
-                          <div className="spinner-border text-primary" role="status">
-                            <span className="visually-hidden">Đang tải...</span>
-                          </div>
+                          <div className="spinner-border text-primary-blue" role="status"></div>
                         ) : qrToken ? (
-                          <div className="bg-white p-3 rounded-3 d-inline-block">
-                            <QRCodeCanvas value={`${window.location.origin}/qr-register?token=${qrToken}`} size={180} />
+                          <div className="bg-white p-3 rounded-4 shadow-sm d-inline-block transition-all hover-scale">
+                            <QRCodeCanvas value={`${window.location.origin}/qr-register?token=${qrToken}`} size={200} />
                           </div>
                         ) : (
-                          <p className="text-muted">Không thể tạo mã QR, vui lòng thử lại sau.</p>
+                          <p className="text-muted small">Không thể tạo mã QR</p>
                         )}
-                        <p className="text-muted small mt-3">Sử dụng điện thoại quét mã QR để đăng ký nhanh</p>
+                        
+                        <div className="mt-5 text-start">
+                          <div className="d-flex align-items-center gap-3 mb-3">
+                            <div className="p-2 bg-white rounded-circle shadow-sm text-primary-blue"><ArrowRight size={16} /></div>
+                            <span className="small text-muted">Quản lý thu chi thông minh</span>
+                          </div>
+                          <div className="d-flex align-items-center gap-3 mb-3">
+                            <div className="p-2 bg-white rounded-circle shadow-sm text-primary-blue"><ArrowRight size={16} /></div>
+                            <span className="small text-muted">Báo cáo tài chính chi tiết</span>
+                          </div>
+                          <div className="d-flex align-items-center gap-3">
+                            <div className="p-2 bg-white rounded-circle shadow-sm text-primary-blue"><ArrowRight size={16} /></div>
+                            <span className="small text-muted">An toàn và bảo mật tuyệt đối</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

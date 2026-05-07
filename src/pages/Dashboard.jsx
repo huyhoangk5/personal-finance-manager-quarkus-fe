@@ -51,45 +51,68 @@ const Dashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="min-vh-100 bg-light">
-      <nav className="navbar navbar-white shadow-sm mb-4">
+    <div className="min-vh-100 bg-main pb-5">
+      <nav className="navbar shadow-sm mb-4">
         <div className="container py-2 d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-2 text-primary fw-bold fs-4">
-            <Wallet /> Finance Manager
+          <div className="d-flex align-items-center gap-2 text-primary-blue fw-bold fs-4">
+            <Wallet size={28} /> Finance Manager
           </div>
           <UserMenu user={user} onLogout={() => { logout(); navigate('/login'); }} onUpdateUser={(u) => login(u)} />
         </div>
       </nav>
 
-      <div className="container">
+      <div className="container mt-4">
         {/* Dashboard Overview Cards */}
-        <div className="row g-3 mb-4">
+        <div className="row g-4 mb-5">
           <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-4 bg-success text-white rounded-4">
-              <small className="text-white-50 fw-bold">THU TRONG THÁNG</small>
-              <h2 className="fw-bold mb-0">{(balance.totalIncomes || 0).toLocaleString()}</h2>
+            <div className="card border-0 shadow-lg p-4 bg-primary-blue text-white h-100 hover-scale">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <small className="text-white-50 fw-bold">SỐ DƯ HIỆN TẠI</small>
+                <div className="bg-white bg-opacity-20 p-2 rounded-circle">
+                  <Wallet size={20} />
+                </div>
+              </div>
+              <h2 className="fw-bold mb-0">{(balance.balance || 0).toLocaleString()} <small className="fs-6 fw-normal opacity-75">VND</small></h2>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-4 bg-danger text-white rounded-4">
-              <small className="text-white-50 fw-bold">CHI TRONG THÁNG</small>
-              <h2 className="fw-bold mb-0">{(balance.totalExpenses || 0).toLocaleString()}</h2>
+            <div className="card border-0 shadow-sm p-4 bg-white h-100 hover-scale">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <small className="text-muted fw-bold">THU NHẬP THÁNG</small>
+                <div className="bg-success bg-opacity-10 p-2 rounded-circle text-success">
+                  <Layers size={20} />
+                </div>
+              </div>
+              <h2 className="fw-bold mb-0 text-main">{(balance.totalIncomes || 0).toLocaleString()}</h2>
+              <div className="mt-2 text-success small fw-bold">+ 12% so với tháng trước</div>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-4 bg-primary text-white rounded-4">
-              <small className="text-white-50 fw-bold">SỐ DƯ TRONG THÁNG</small>
-              <h2 className="fw-bold mb-0">{(balance.balance || 0).toLocaleString()}</h2>
+            <div className="card border-0 shadow-sm p-4 bg-white h-100 hover-scale">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <small className="text-muted fw-bold">CHI TIÊU THÁNG</small>
+                <div className="bg-danger bg-opacity-10 p-2 rounded-circle text-danger">
+                  <PieChart size={20} />
+                </div>
+              </div>
+              <h2 className="fw-bold mb-0 text-main">{(balance.totalExpenses || 0).toLocaleString()}</h2>
+              <div className="mt-2 text-danger small fw-bold">- 5% so với tháng trước</div>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="card border-0 shadow-sm mb-4">
-          <div className="card-body p-2 d-flex gap-2 flex-wrap">
-            <TabButton active={activeTab === 'transactions'} onClick={() => setActiveTab('transactions')} icon={<List size={20}/>} label="Giao dịch" />
-            <TabButton active={activeTab === 'categoriesBudget'} onClick={() => setActiveTab('categoriesBudget')} icon={<Layers size={20}/>} label="Ngân sách" />
-            <TabButton active={activeTab === 'stats'} onClick={() => setActiveTab('stats')} icon={<PieChart size={20}/>} label="Thống kê" />
+        {/* Tab Navigation (Premium Segmented Control) */}
+        <div className="d-flex justify-content-center mb-5">
+          <div className="nav-tabs-premium p-1 shadow-sm">
+            <button className={`nav-link-premium ${activeTab === 'transactions' ? 'active' : ''}`} onClick={() => setActiveTab('transactions')}>
+              <List size={18} className="me-1" /> Giao dịch
+            </button>
+            <button className={`nav-link-premium ${activeTab === 'categoriesBudget' ? 'active' : ''}`} onClick={() => setActiveTab('categoriesBudget')}>
+              <Layers size={18} className="me-1" /> Ngân sách
+            </button>
+            <button className={`nav-link-premium ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>
+              <PieChart size={18} className="me-1" /> Thống kê
+            </button>
           </div>
         </div>
 
@@ -97,27 +120,39 @@ const Dashboard = () => {
           <div className="col-12">
             {activeTab === 'transactions' && (
               <div className="row g-4">
-                <div className="col-lg-7">
-                  <TransactionTable
-                    userId={user.userId}
-                    onDataChange={handleTransactionSaved}
-                    onEdit={(t) => { setEditingTransaction(t); setModalOpen(true); }}
-                    onAdd={() => { setEditingTransaction(null); setModalOpen(true); }}
-                    refreshKey={refreshKey}
-                  />
+                <div className="col-lg-8">
+                  <div className="card border-0 shadow-sm overflow-hidden">
+                    <TransactionTable
+                      userId={user.userId}
+                      onDataChange={handleTransactionSaved}
+                      onEdit={(t) => { setEditingTransaction(t); setModalOpen(true); }}
+                      onAdd={() => { setEditingTransaction(null); setModalOpen(true); }}
+                      refreshKey={refreshKey}
+                    />
+                  </div>
                 </div>
-                <div className="col-lg-5">
-                  <MonthlyCalendar 
-                    userId={user.userId} 
-                    month={calendarMonth} 
-                    onMonthChange={setCalendarMonth} 
-                    refreshKey={refreshKey} 
-                  />
+                <div className="col-lg-4">
+                  <div className="card border-0 shadow-sm p-3">
+                    <MonthlyCalendar 
+                      userId={user.userId} 
+                      month={calendarMonth} 
+                      onMonthChange={setCalendarMonth} 
+                      refreshKey={refreshKey} 
+                    />
+                  </div>
                 </div>
               </div>
             )}
-            {activeTab === 'categoriesBudget' && <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />}
-            {activeTab === 'stats' && <SpendingChart userId={user.userId} />}
+            {activeTab === 'categoriesBudget' && (
+              <div className="card border-0 shadow-sm p-4">
+                <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />
+              </div>
+            )}
+            {activeTab === 'stats' && (
+              <div className="card border-0 shadow-sm p-4">
+                <SpendingChart userId={user.userId} />
+              </div>
+            )}
           </div>
         </div>
       </div>
