@@ -411,3 +411,85 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--primary-blue) !important;
 }
 
+/* Premium Account Page Styles */
+.shadow-premium {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-container-premium {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 4px solid var(--bg-card);
+}
+
+.bg-soft-blue {
+  background: linear-gradient(135deg, #caf0f8 0%, #90e0ef 100%) !important;
+  transition: transform 0.3s ease;
+}
+
+.bg-soft-blue:hover {
+  transform: scale(1.05);
+}
+
+.user-details-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item {
+  transition: background-color 0.2s ease;
+}
+
+.detail-item:hover {
+  background-color: rgba(0, 119, 182, 0.02);
+}
+
+.btn-soft-primary {
+  background-color: var(--accent-blue) !important;
+  color: var(--primary-blue) !important;
+  border: none !important;
+  font-weight: 700 !important;
+}
+
+.btn-soft-primary:hover {
+  background-color: var(--primary-blue) !important;
+  color: white !important;
+}
+
+.change-password-box {
+  border: 1px solid var(--accent-blue);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-card {
+  border: 1px solid var(--border-color);
+}
+
+.letter-spacing-1 {
+  letter-spacing: 0.1em;
+}
+
+.btn-white {
+  background-color: white !important;
+  color: var(--primary-blue) !important;
+}
+
+/* Responsive Fixes for Account Page */
+@media (max-width: 576px) {
+  .user-details-grid .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .user-details-grid .col-sm-4 {
+    margin-bottom: 4px;
+  }
+}
+
