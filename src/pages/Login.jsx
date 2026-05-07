@@ -193,7 +193,7 @@ const Login = () => {
                                 />
                                 <label className="form-check-label small text-muted" htmlFor="rememberMe">Ghi nhớ tôi</label>
                               </div>
-                              <Link to="/forgot-password" **className="text-primary-blue text-decoration-none small fw-bold"**>Quên mật khẩu?</Link>
+                              <Link to="/forgot-password" className="text-primary-blue text-decoration-none small fw-bold">Quên mật khẩu?</Link>
                             </div>
                             <button type="submit" className="btn btn-primary w-100 py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" disabled={loading}>
                               {loading ? <span className="spinner-border spinner-border-sm"></span> : <>Tiếp tục <ArrowRight size={18} /></>}

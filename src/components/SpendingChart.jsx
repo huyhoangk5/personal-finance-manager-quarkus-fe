@@ -174,7 +174,12 @@ const SpendingChart = ({ userId }) => {
               return ` ${label}: ${value.toLocaleString()}đ (${percentage}%)`;
             }
           }
-    if (loading) return <div className="text-center p-5 text-muted">Đang phân tích dữ liệu tài chính...</div>;
+        }
+      }
+    };
+  };
+
+  if (loading) return <div className="text-center p-5 text-muted">Đang phân tích dữ liệu tài chính...</div>;
 
   return (
     <div className="container py-2">
