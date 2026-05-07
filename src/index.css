@@ -380,13 +380,88 @@ h1, h2, h3, h4, h5, h6 {
 .text-main { color: var(--text-main) !important; }
 .text-muted { color: var(--text-muted) !important; }
 
-/* Ensure clear contrast in cards */
+/* Ensure clear contrast in cards using variables instead of hardcoded colors */
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
-  color: #000000 !important;
+  color: var(--text-main) !important;
 }
 .card p {
-  color: #475569 !important;
+  color: var(--text-muted) !important;
 }
+
+/* Global Dark Mode Overrides for Bootstrap/Utility Classes */
+[data-bs-theme="dark"] .bg-white {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+  background-color: var(--bg-light) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .btn-link.text-dark {
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .detail-item .text-muted {
+  color: var(--text-muted) !important;
+}
+
+[data-bs-theme="dark"] .modal-content {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select {
+  background-color: var(--bg-main) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .btn-light {
+  background-color: var(--bg-light) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .table {
+  color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .table thead th {
+  background-color: var(--bg-main) !important;
+  color: var(--text-muted) !important;
+}
+
+[data-bs-theme="dark"] hr {
+  border-color: var(--border-color) !important;
+  opacity: 0.2;
+}
+
+[data-bs-theme="dark"] .bg-opacity-50 {
+  --bs-bg-opacity: 0.15 !important;
+}
+
+[data-bs-theme="dark"] .border-white {
+  border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .border-light {
+  border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+  color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] .detail-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 
 /* Search Bar Focus Effect */
 .premium-search-group {
@@ -417,13 +492,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .avatar-container-premium {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 4px solid var(--bg-card);
+  background: var(--bg-card);
+  border: 4px solid var(--border-color);
 }
 
 .bg-soft-blue {
   background: linear-gradient(135deg, #caf0f8 0%, #90e0ef 100%) !important;
   transition: transform 0.3s ease;
+}
+
+[data-bs-theme="dark"] .bg-soft-blue {
+  background: linear-gradient(135deg, #03045e 0%, #0077b6 100%) !important;
+  color: #caf0f8 !important;
 }
 
 .bg-soft-blue:hover {
@@ -437,10 +517,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .detail-item {
   transition: background-color 0.2s ease;
+  border-bottom-color: var(--border-color) !important;
 }
 
 .detail-item:hover {
-  background-color: rgba(0, 119, 182, 0.02);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .btn-soft-primary {
