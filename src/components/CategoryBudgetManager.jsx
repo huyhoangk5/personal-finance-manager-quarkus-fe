@@ -50,8 +50,9 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   }, [userId]);
 
   const fetchCategories = useCallback(async () => {
+    if (!userId) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?userId=${userId}`);
       const unique = res.data.filter((cat, idx, self) =>
         idx === self.findIndex(c => c.categoryName === cat.categoryName && c.type === cat.type)
       );
@@ -59,7 +60,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
     } catch (err) {
       console.error("Lỗi lấy danh mục", err);
     }
-  }, []);
+  }, [userId]);
 
   const fetchBudgets = useCallback(async () => {
     if (!userId) return;
@@ -140,7 +141,8 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
     try {
       const catRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/categories`, {
         categoryName: newName,
-        type: newType
+        type: newType,
+        user: { userId }
       });
       const newCategory = catRes.data;
       if (newType === 'CHI' && newLimit) {
@@ -168,7 +170,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const handleUpdateCategory = async () => {
     if (!editingCategory) return;
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/categories/${editingCategory.categoryId}`, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/categories/${editingCategory.categoryId}?userId=${userId}`, {
         categoryName: editName,
         type: editType
       });
@@ -199,7 +201,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const handleDeleteConfirmed = async () => {
     if (!deleteTarget) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/categories/${deleteTarget.id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/categories/${deleteTarget.id}?userId=${userId}`);
       fetchCategories();
       fetchBudgets();
       if (onDataChange) onDataChange();
@@ -272,7 +274,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
       let failCount = 0;
       for (const id of selectedExpenseIds) {
         try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/api/categories/${id}`);
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/categories/${id}?userId=${userId}`);
           successCount++;
         } catch (err) {
           failCount++;

@@ -21,8 +21,9 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
   const [amountSuggestions, setAmountSuggestions] = useState([]);
 
   const fetchCategories = async (type) => {
+    if (!userId) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?type=${type}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?type=${type}&userId=${userId}`);
       const data = Array.isArray(res.data) ? res.data : [];
       const unique = data.filter((cat, idx, self) =>
         idx === self.findIndex(c => c.categoryName === cat.categoryName && c.type === cat.type)
@@ -126,7 +127,8 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
     try {
       const catRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/categories`, {
         categoryName: newCatName,
-        type: newCatType
+        type: newCatType,
+        user: { userId }
       });
       const newCategory = catRes.data;
       if (newCatType === 'CHI' && newCatLimit) {
