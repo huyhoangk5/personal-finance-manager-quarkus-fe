@@ -1,10 +1,10 @@
 // Frontend validation utility based on Excel requirements
 
 // Regex patterns
-const USERNAME_PATTERN = /^[a-zA-Z0-9]{3,20}$/;
+const USERNAME_PATTERN = /^[a-zA-Z0-9.@_-]{3,50}$/;
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,16}$/;
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const FULLNAME_PATTERN = /^[a-zA-ZÀ-ỹ\s]{1,100}$/;
+const FULLNAME_PATTERN = /^[a-zA-ZÀ-ỹ\s\.]{1,100}$/;
 const PHONE_PATTERN = /^0\d{9,10}$/;
 const OTP_PATTERN = /^\d{6}$/;
 
@@ -50,12 +50,12 @@ export const validateUsername = (username) => {
   
   const trimmedUsername = username.trim();
   
-  if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
-    result.addError('Tên đăng nhập phải từ 3-20 ký tự');
+  if (trimmedUsername.length < 3 || trimmedUsername.length > 50) {
+    result.addError('Tên đăng nhập phải từ 3-50 ký tự');
   }
   
   if (!USERNAME_PATTERN.test(trimmedUsername)) {
-    result.addError('Tên đăng nhập chỉ được chứa chữ cái và số, không có ký tự đặc biệt hoặc khoảng trắng');
+    result.addError('Tên đăng nhập không hợp lệ');
   }
   
   return result;
@@ -131,7 +131,7 @@ export const validateFullName = (fullName) => {
     }
     
     if (!FULLNAME_PATTERN.test(trimmedName)) {
-      result.addError('Họ và tên chỉ được chứa chữ cái và khoảng trắng');
+      result.addError('Họ và tên chỉ được chứa chữ cái, khoảng trắng và dấu chấm');
     }
   }
   
