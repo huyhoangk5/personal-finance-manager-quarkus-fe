@@ -3,6 +3,7 @@ import axios from 'axios';
 import { PlusCircle, Edit3, Trash2, Save, X, Copy, Eye, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import ConfirmationModal from './ConfirmationModal';
+import { validateCategoryName, validateAmount } from '../utils/validation';
 
 const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const toast = useToast();
@@ -138,6 +139,27 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
   const handleCreateCategory = async (e) => {
     e.preventDefault();
+    
+    // Validate name
+    const nameValidation = validateCategoryName(newName);
+    if (!nameValidation.isValid()) {
+      toast.showToast('error', 'Lỗi validation', nameValidation.getFirstError());
+      return;
+    }
+    
+    // Validate limit for CHI type
+    if (newType === 'CHI') {
+      if (!newLimit || newLimit.trim() === '') {
+        toast.showToast('error', 'Lỗi validation', 'Hạn mức không được để trống cho loại Chi tiêu');
+        return;
+      }
+      const limitVal = parseFloat(newLimit);
+      if (isNaN(limitVal) || limitVal <= 0) {
+        toast.showToast('error', 'Lỗi validation', 'Hạn mức phải là số dương lớn hơn 0');
+        return;
+      }
+    }
+
     try {
       const catRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/categories`, {
         categoryName: newName,
@@ -169,6 +191,27 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
   const handleUpdateCategory = async () => {
     if (!editingCategory) return;
+    
+    // Validate name
+    const nameValidation = validateCategoryName(editName);
+    if (!nameValidation.isValid()) {
+      toast.showToast('error', 'Lỗi validation', nameValidation.getFirstError());
+      return;
+    }
+    
+    // Validate limit for CHI type
+    if (editType === 'CHI') {
+      if (!editLimit || (typeof editLimit === 'string' && editLimit.trim() === '')) {
+        toast.showToast('error', 'Lỗi validation', 'Hạn mức không được để trống cho loại Chi tiêu');
+        return;
+      }
+      const limitVal = parseFloat(editLimit);
+      if (isNaN(limitVal) || limitVal <= 0) {
+        toast.showToast('error', 'Lỗi validation', 'Hạn mức phải là số dương lớn hơn 0');
+        return;
+      }
+    }
+
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/api/categories/${editingCategory.categoryId}?userId=${userId}`, {
         categoryName: editName,

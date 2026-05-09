@@ -113,29 +113,29 @@ const Dashboard = () => {
         </div>
 
         <nav className="sidebar-nav">
-          <button 
-            className={`sidebar-link ${activeTab === 'transactions' ? 'active' : ''}`} 
+          <button
+            className={`sidebar-link ${activeTab === 'transactions' ? 'active' : ''}`}
             onClick={() => setActiveTab('transactions')}
           >
             <List />
             <span>Giao dịch</span>
           </button>
-          <button 
-            className={`sidebar-link ${activeTab === 'categoriesBudget' ? 'active' : ''}`} 
+          <button
+            className={`sidebar-link ${activeTab === 'categoriesBudget' ? 'active' : ''}`}
             onClick={() => setActiveTab('categoriesBudget')}
           >
             <Layers />
             <span>Ngân sách</span>
           </button>
-          <button 
-            className={`sidebar-link ${activeTab === 'stats' ? 'active' : ''}`} 
+          <button
+            className={`sidebar-link ${activeTab === 'stats' ? 'active' : ''}`}
             onClick={() => setActiveTab('stats')}
           >
             <PieChart />
             <span>Thống kê</span>
           </button>
-          <button 
-            className={`sidebar-link ${activeTab === 'account' ? 'active' : ''}`} 
+          <button
+            className={`sidebar-link ${activeTab === 'account' ? 'active' : ''}`}
             onClick={() => setActiveTab('account')}
           >
             <User />
@@ -198,7 +198,7 @@ const Dashboard = () => {
                 </div>
                 <h2 className="fw-bold mb-0 text-dark">{(balance.totalIncomes || 0).toLocaleString()}</h2>
                 <div className="mt-2 text-success small fw-bold d-flex align-items-center gap-1">
-                   Tăng 12% so với tháng trước
+
                 </div>
               </div>
             </div>
@@ -212,7 +212,7 @@ const Dashboard = () => {
                 </div>
                 <h2 className="fw-bold mb-0 text-dark">{(balance.totalExpenses || 0).toLocaleString()}</h2>
                 <div className="mt-2 text-danger small fw-bold d-flex align-items-center gap-1">
-                   Giảm 5% so với tháng trước
+
                 </div>
               </div>
             </div>
@@ -237,11 +237,11 @@ const Dashboard = () => {
                 </div>
                 <div className="col-lg-4">
                   <div className="card border-0 shadow-sm p-3 bg-white">
-                    <MonthlyCalendar 
-                      userId={user.userId} 
-                      month={calendarMonth} 
-                      onMonthChange={setCalendarMonth} 
-                      refreshKey={refreshKey} 
+                    <MonthlyCalendar
+                      userId={user.userId}
+                      month={calendarMonth}
+                      onMonthChange={setCalendarMonth}
+                      refreshKey={refreshKey}
                     />
                   </div>
                 </div>
@@ -264,7 +264,7 @@ const Dashboard = () => {
                     <div className="card border-0 shadow-premium rounded-4 overflow-hidden bg-white">
                       {/* Cover Color Strip */}
                       <div className="bg-primary-blue" style={{ height: '100px' }}></div>
-                      
+
                       <div className="card-body p-4 p-md-5 pt-0">
                         {/* Avatar Section */}
                         <div className="text-center" style={{ marginTop: '-50px' }}>
@@ -285,7 +285,7 @@ const Dashboard = () => {
                               <div className="col-sm-8 fw-semibold text-dark">{user.fullName || 'Chưa cập nhật'}</div>
                             </div>
                           </div>
-                          
+
                           <div className="detail-item py-3 border-bottom">
                             <div className="row align-items-center">
                               <div className="col-sm-4 text-muted small fw-bold text-uppercase">Email</div>
@@ -305,8 +305,8 @@ const Dashboard = () => {
                               <div className="col-sm-4 text-muted small fw-bold text-uppercase">Mật khẩu</div>
                               <div className="col-sm-8 d-flex align-items-center gap-3">
                                 <span className="fw-semibold text-dark">••••••••</span>
-                                <button 
-                                  onClick={() => setShowChangePassword(!showChangePassword)} 
+                                <button
+                                  onClick={() => setShowChangePassword(!showChangePassword)}
                                   className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1"
                                 >
                                   <Key size={14} /> {showChangePassword ? 'Hủy' : 'Đổi mật khẩu'}
@@ -324,36 +324,36 @@ const Dashboard = () => {
                             </h6>
                             <div className="row g-3">
                               <div className="col-12">
-                                <input 
-                                  type="password" 
-                                  className="form-control" 
-                                  placeholder="Mật khẩu cũ" 
-                                  value={oldPassword} 
-                                  onChange={e => setOldPassword(e.target.value)} 
+                                <input
+                                  type="password"
+                                  className="form-control"
+                                  placeholder="Mật khẩu cũ"
+                                  value={oldPassword}
+                                  onChange={e => setOldPassword(e.target.value)}
                                 />
                               </div>
                               <div className="col-md-6">
-                                <input 
-                                  type="password" 
-                                  className="form-control" 
-                                  placeholder="Mật khẩu mới" 
-                                  value={newPassword} 
-                                  onChange={e => setNewPassword(e.target.value)} 
+                                <input
+                                  type="password"
+                                  className="form-control"
+                                  placeholder="Mật khẩu mới"
+                                  value={newPassword}
+                                  onChange={e => setNewPassword(e.target.value)}
                                 />
                               </div>
                               <div className="col-md-6">
-                                <input 
-                                  type="password" 
-                                  className="form-control" 
-                                  placeholder="Xác nhận mật khẩu mới" 
-                                  value={confirmPassword} 
-                                  onChange={e => setConfirmPassword(e.target.value)} 
+                                <input
+                                  type="password"
+                                  className="form-control"
+                                  placeholder="Xác nhận mật khẩu mới"
+                                  value={confirmPassword}
+                                  onChange={e => setConfirmPassword(e.target.value)}
                                 />
                               </div>
                               <div className="col-12">
-                                <button 
-                                  className="btn btn-primary w-100 py-2 fw-bold shadow-sm" 
-                                  onClick={handleChangePassword} 
+                                <button
+                                  className="btn btn-primary w-100 py-2 fw-bold shadow-sm"
+                                  onClick={handleChangePassword}
                                   disabled={loading}
                                 >
                                   {loading ? <span className="spinner-border spinner-border-sm"></span> : 'Lưu mật khẩu mới'}
@@ -372,7 +372,7 @@ const Dashboard = () => {
 
                         {/* Settings Dropdown Section */}
                         <div className="settings-section mt-5 pt-3 border-top">
-                          <button 
+                          <button
                             onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
                             className="btn btn-link text-decoration-none text-dark fw-bold d-flex align-items-center justify-content-between w-100 p-0"
                           >
@@ -390,28 +390,28 @@ const Dashboard = () => {
                                     <Sun size={18} /> Chế độ giao diện
                                   </label>
                                   <div className="d-flex gap-2">
-                                    <button 
-                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'light' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`} 
+                                    <button
+                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'light' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`}
                                       onClick={() => setTheme('light')}
                                     >
                                       <Sun size={16} /> Sáng
                                     </button>
-                                    <button 
-                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'dark' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`} 
+                                    <button
+                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'dark' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`}
                                       onClick={() => setTheme('dark')}
                                     >
                                       <Moon size={16} /> Tối
                                     </button>
                                   </div>
                                 </div>
-                                
+
                                 <div className="mb-0">
                                   <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
                                     <Globe size={18} /> Ngôn ngữ
                                   </label>
-                                  <select 
-                                    className="form-select border-0 shadow-sm py-2 rounded-3" 
-                                    value={language} 
+                                  <select
+                                    className="form-select border-0 shadow-sm py-2 rounded-3"
+                                    value={language}
                                     onChange={e => setLanguage(e.target.value)}
                                   >
                                     <option value="vi">Tiếng Việt</option>
@@ -438,7 +438,7 @@ const Dashboard = () => {
       </main>
 
       <TransactionFormModal userId={user.userId} show={modalOpen} onClose={() => setModalOpen(false)} onTransactionAdded={handleTransactionSaved} editData={editingTransaction} />
-      
+
       <EditProfileModal
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}

@@ -233,8 +233,22 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
     if (!typeValidation.isValid()) {
       errors.categoryType = typeValidation.getFirstError();
     }
-    if (!limitValidation.isValid()) {
-      errors.categoryLimit = limitValidation.getFirstError();
+    
+    // Enforce budget limit for CHI type
+    if (newCatType === 'CHI') {
+      if (!newCatLimit || newCatLimit.trim() === '') {
+        errors.categoryLimit = 'Hạn mức không được để trống cho loại Chi tiêu';
+      } else {
+        const limitVal = parseFloat(newCatLimit);
+        if (isNaN(limitVal) || limitVal <= 0) {
+          errors.categoryLimit = 'Hạn mức phải là số dương lớn hơn 0';
+        }
+      }
+    } else if (newCatLimit) {
+      // For THU type, if limit is provided (though optional), validate it
+      if (!limitValidation.isValid()) {
+        errors.categoryLimit = limitValidation.getFirstError();
+      }
     }
     
     if (Object.keys(errors).length > 0) {

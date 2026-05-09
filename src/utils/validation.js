@@ -7,6 +7,7 @@ const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const FULLNAME_PATTERN = /^[a-zA-ZÀ-ỹ\s\.]{1,100}$/;
 const PHONE_PATTERN = /^0\d{9,10}$/;
 const OTP_PATTERN = /^\d{6}$/;
+const CATEGORY_NAME_PATTERN = /^[a-zA-ZÀ-ỹ\s]{1,50}$/;
 
 // Constants
 const MAX_AMOUNT = 1_000_000_000_000; // 10^12
@@ -281,6 +282,10 @@ export const validateCategoryName = (categoryName) => {
   
   if (trimmedName.length < 1 || trimmedName.length > MAX_CATEGORY_NAME_LENGTH) {
     result.addError(`Tên danh mục phải từ 1-${MAX_CATEGORY_NAME_LENGTH} ký tự`);
+  }
+  
+  if (!CATEGORY_NAME_PATTERN.test(trimmedName)) {
+    result.addError('Tên danh mục chỉ được chứa chữ cái tiếng Việt và khoảng trắng, không chứa ký tự đặc biệt hoặc số');
   }
   
   return result;
