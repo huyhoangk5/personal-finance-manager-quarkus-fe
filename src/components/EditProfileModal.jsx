@@ -176,23 +176,4 @@ const EditProfileModal = ({ show, onClose, user, onUpdate }) => {
   );
 };
 
-export default EditProfileModal;
-            <div className="mb-3">
-              <label className="form-label small fw-bold">Họ và tên</label>
-              <input type="text" className="form-control" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Nhập họ tên" />
-            </div>
-            <div className="mb-3">
-              <label className="form-label small fw-bold">Email</label>
-              <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} placeholder="Nhập email" />
-            </div>
-            <button type="submit" className="btn btn-primary w-100 py-2 fw-bold" disabled={loading}>
-              {loading ? <span className="spinner-border spinner-border-sm"></span> : <> Lưu thay đổi</>}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default EditProfileModal;
+export default EditProfileModal;
