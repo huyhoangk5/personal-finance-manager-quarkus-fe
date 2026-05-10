@@ -411,7 +411,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                   <tr className="text-dark small fw-bold">
                     <th>DANH MỤC</th>
                     <th className="text-end">TỔNG THU</th>
-                    <th className="text-center">Thao tác</th>
+                    <th className="text-center">THAO TÁC</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -470,7 +470,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                     <th>DANH MỤC</th>
                     <th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>HẠN MỨC {getSortIcon('limit')}</th>
                     <th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>ĐÃ CHI {getSortIcon('spent')}</th>
-                    <th className="text-center">Thao tác</th>
+                    <th className="text-center">THAO TÁC</th>
                   </tr>
                 </thead>
                 <tbody>
