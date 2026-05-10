@@ -139,14 +139,14 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
   const handleCreateCategory = async (e) => {
     e.preventDefault();
-    
+
     // Validate name
     const nameValidation = validateCategoryName(newName);
     if (!nameValidation.isValid()) {
       toast.showToast('error', 'Lỗi validation', nameValidation.getFirstError());
       return;
     }
-    
+
     // Validate limit for CHI type
     if (newType === 'CHI') {
       if (!newLimit || newLimit.trim() === '') {
@@ -191,14 +191,14 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
 
   const handleUpdateCategory = async () => {
     if (!editingCategory) return;
-    
+
     // Validate name
     const nameValidation = validateCategoryName(editName);
     if (!nameValidation.isValid()) {
       toast.showToast('error', 'Lỗi validation', nameValidation.getFirstError());
       return;
     }
-    
+
     // Validate limit for CHI type
     if (editType === 'CHI') {
       if (!editLimit || (typeof editLimit === 'string' && editLimit.trim() === '')) {
@@ -344,7 +344,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             <Copy size={16} /> Sao chép tháng trước
           </button>
           <button onClick={() => setShowForm(!showForm)} className={`btn btn-sm d-flex align-items-center gap-2 ${showForm ? 'btn-light' : 'btn-primary'}`}>
-            {showForm ? <X size={16} /> : <PlusCircle size={16} />} 
+            {showForm ? <X size={16} /> : <PlusCircle size={16} />}
             {showForm ? 'Hủy bỏ' : 'Thêm danh mục'}
           </button>
         </div>
@@ -411,7 +411,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                   <tr className="text-dark small fw-bold">
                     <th>DANH MỤC</th>
                     <th className="text-end">TỔNG THU</th>
-                    <th className="text-center">#</th>
+                    <th className="text-center">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -439,7 +439,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h6 className="mb-0 text-dark fw-bold d-flex align-items-center gap-2">
                 <div className="p-1 bg-danger rounded-circle text-white" style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
+                  <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
                 </div>
                 Chi tiêu & Hạn mức
               </h6>
@@ -470,7 +470,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
                     <th>DANH MỤC</th>
                     <th className="text-end cursor-pointer" onClick={() => requestSort('limit')}>HẠN MỨC {getSortIcon('limit')}</th>
                     <th className="text-end cursor-pointer" onClick={() => requestSort('spent')}>ĐÃ CHI {getSortIcon('spent')}</th>
-                    <th className="text-center">#</th>
+                    <th className="text-center">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
