@@ -28,7 +28,7 @@ const MonthlyCalendar = ({ userId, month, onMonthChange, refreshKey }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/daily-summary?userId=${userId}&month=${currentMonth}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/daily-summary?month=${currentMonth}`);
         setDailyData(res.data);
       } catch (err) {
         console.error("Lỗi lấy dữ liệu lịch:", err);
@@ -37,7 +37,7 @@ const MonthlyCalendar = ({ userId, month, onMonthChange, refreshKey }) => {
       }
     };
     fetchData();
-  }, [userId, currentMonth, refreshKey]); // thêm refreshKey vào dependency
+  }, [currentMonth, refreshKey]);
 
   const changeMonth = (delta) => {
     const [year, mon] = currentMonth.split('-');

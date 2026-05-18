@@ -20,7 +20,7 @@ const QrLoginPage = () => {
     const verify = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/qr-login/verify?token=${token}`);
-        if (res.data && res.data.userId) {
+        if (res.data?.accessToken) {
           login(res.data);
           toast.showToast('success', 'Đăng nhập thành công', 'Chào mừng bạn đến với Finance Manager. Vui lòng đổi mật khẩu trong phần cài đặt.');
           navigate('/');

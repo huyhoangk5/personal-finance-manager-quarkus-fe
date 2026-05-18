@@ -7,7 +7,7 @@ import { useToast } from '../context/ToastContext';
 const QrConfirm = () => {
   const [searchParams] = useSearchParams();
   const qrToken = searchParams.get('token');
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const toast = useToast();
   const [status, setStatus] = useState('Đang xác nhận...');
 
@@ -22,10 +22,7 @@ const QrConfirm = () => {
     }
     const confirm = async () => {
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/users/qr-login/confirm`, {
-          qrToken,
-          userId: user.userId
-        });
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/users/qr-login/confirm`, { qrToken });
         setStatus('Xác nhận thành công! Máy tính sẽ tự động đăng nhập.');
         toast.showToast('success', 'Thành công', 'Bạn đã xác nhận đăng nhập từ máy tính.');
         setTimeout(() => window.close(), 2000);

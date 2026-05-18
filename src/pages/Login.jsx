@@ -65,7 +65,7 @@ const Login = () => {
       pollingRef.current = setInterval(async () => {
         try {
           const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/qr-login/status?token=${qrToken}`);
-          if (res.data && res.data.userId) {
+          if (res.data?.accessToken) {
             login(res.data);
             clearInterval(pollingRef.current);
             toast.showToast('success', 'Đăng nhập thành công', 'Chào mừng bạn đến với Finance Manager');
@@ -110,7 +110,7 @@ const Login = () => {
       if (rememberMe) {
         localStorage.setItem('rememberedUsername', username.trim());
         localStorage.setItem('rememberedPassword', password);
-        localStorage.setItem('rememberedEmail', res.data.email || '');
+        localStorage.setItem('rememberedEmail', res.data.user?.email || '');
       } else {
         localStorage.removeItem('rememberedUsername');
         localStorage.removeItem('rememberedPassword');
@@ -131,9 +131,9 @@ const Login = () => {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/google-login`, { token: credentialResponse.credential });
       login(res.data);
       if (rememberMe) {
-        localStorage.setItem('rememberedUsername', res.data.username);
+        localStorage.setItem('rememberedUsername', res.data.user?.username || '');
         localStorage.setItem('rememberedPassword', '');
-        localStorage.setItem('rememberedEmail', res.data.email || '');
+        localStorage.setItem('rememberedEmail', res.data.user?.email || '');
       }
       navigate('/');
     } catch (err) {
@@ -334,4 +334,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;

@@ -29,36 +29,33 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
   const [selectedExpenseIds, setSelectedExpenseIds] = useState(new Set());
 
   const fetchSpending = useCallback(async () => {
-    if (!userId) return;
     const currentMonth = new Date().toISOString().slice(0, 7);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/spending-by-category-month?userId=${userId}&month=${currentMonth}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/spending-by-category-month?month=${currentMonth}`);
       setSpendingData(res.data);
     } catch (err) {
       console.error("Lỗi lấy chi tiêu theo tháng", err);
     }
-  }, [userId]);
+  }, []);
 
   const fetchIncome = useCallback(async () => {
-    if (!userId) return;
     const currentMonth = new Date().toISOString().slice(0, 7);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/income-by-category-month?userId=${userId}&month=${currentMonth}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/income-by-category-month?month=${currentMonth}`);
       setIncomeData(res.data);
     } catch (err) {
       console.error("Lỗi lấy thu nhập theo tháng", err);
     }
-  }, [userId]);
+  }, []);
 
   const fetchCategories = useCallback(async () => {
-    if (!userId) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?userId=${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("Lỗi lấy danh mục", err);
     }
-  }, [userId]);
+  }, []);
 
   const fetchBudgets = useCallback(async () => {
     if (!userId) return;

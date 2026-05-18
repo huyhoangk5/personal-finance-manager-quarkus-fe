@@ -56,7 +56,6 @@ const Dashboard = () => {
     setLoading(true);
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/api/users/change-password`, {
-        userId: user.userId,
         oldPassword,
         newPassword
       });
@@ -76,7 +75,7 @@ const Dashboard = () => {
     if (!user) return;
     try {
       const currentMonth = new Date().toISOString().slice(0, 7);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/balance-month?userId=${user.userId}&month=${currentMonth}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/balance-month?month=${currentMonth}`);
       setBalance(res.data);
     } catch (err) {
       console.error("Lỗi lấy số dư tháng:", err);

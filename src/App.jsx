@@ -12,6 +12,16 @@ import QrRegister from './pages/QrRegister';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { useEffect } from 'react';
+import { setupAxiosInterceptors } from './utils/axiosConfig';
+
+function AxiosSetup() {
+  const { refreshAccessToken, logout } = useAuth();
+  useEffect(() => {
+    setupAxiosInterceptors(refreshAccessToken, logout);
+  }, [refreshAccessToken, logout]);
+  return null;
+}
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -37,6 +47,7 @@ function App() {
           <LanguageProvider>
             <ToastProvider>
               <BrowserRouter>
+                <AxiosSetup />
                 <AppRoutes />
               </BrowserRouter>
             </ToastProvider>

@@ -20,13 +20,13 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
 
   const fetchTransactions = useCallback(async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/transactions?userId=${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/transactions`);
       setTransactions(res.data);
-      setSelectedRows(new Set()); // Reset selection khi refresh
+      setSelectedRows(new Set());
     } catch (err) {
       console.error("Lỗi lấy danh sách giao dịch:", err);
     }
-  }, [userId]);
+  }, []);
 
   const sortTransactions = (data, sortKey, direction) => {
     if (!data.length) return data;
@@ -97,7 +97,7 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
   const handleDeleteConfirmed = async () => {
     if (!deleteTarget) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/transactions/${deleteTarget.id}?userId=${userId}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/transactions/${deleteTarget.id}`);
       fetchTransactions();
       if (onDataChange) onDataChange();
       toast.showToast('success', 'Xóa giao dịch thành công', 'Đã xóa 1 giao dịch');
@@ -147,7 +147,7 @@ const TransactionTable = ({ userId, onDataChange, onEdit, onAdd, refreshKey }) =
       let failCount = 0;
       for (const id of selectedRows) {
         try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/api/transactions/${id}?userId=${userId}`);
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/transactions/${id}`);
           successCount++;
         } catch (err) {
           failCount++;

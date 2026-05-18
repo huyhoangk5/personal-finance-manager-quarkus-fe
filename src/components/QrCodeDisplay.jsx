@@ -11,7 +11,7 @@ const QrCodeDisplay = ({ userId }) => {
     const fetchQrToken = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/qr-code?userId=${userId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/qr-code`);
         setQrToken(res.data);
       } catch (err) {
         setError('Không thể lấy mã QR');

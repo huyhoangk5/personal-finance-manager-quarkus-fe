@@ -46,7 +46,7 @@ const SpendingChart = ({ userId }) => {
       const currentMonth = new Date().toISOString().slice(0, 7);
       
       // Pie
-      const pieRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/spending-by-category-month?userId=${userId}&month=${currentMonth}`);
+      const pieRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/spending-by-category-month?month=${currentMonth}`);
       const rawPie = pieRes.data;
       setPieData({
         labels: Object.keys(rawPie),
@@ -59,7 +59,7 @@ const SpendingChart = ({ userId }) => {
       });
 
       // Bar & Line
-      const trendRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/trend?userId=${userId}&months=6`);
+      const trendRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/trend?months=6`);
       const trend = trendRes.data;
       const months = trend.map(t => t.month);
       const incomes = trend.map(t => t.income);
@@ -103,7 +103,7 @@ const SpendingChart = ({ userId }) => {
       });
 
       // Top categories
-      const topRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/top-spending-categories?userId=${userId}&limit=5`);
+      const topRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/top-spending-categories?limit=5`);
       setTopCategories(topRes.data);
     } catch (err) {
       console.error("Lỗi tải dữ liệu thống kê", err);
@@ -241,4 +241,4 @@ const SpendingChart = ({ userId }) => {
   );
 };
 
-export default SpendingChart;
+export default SpendingChart;
