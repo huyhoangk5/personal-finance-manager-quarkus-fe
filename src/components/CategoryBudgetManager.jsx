@@ -54,10 +54,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
     if (!userId) return;
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?userId=${userId}`);
-      const unique = res.data.filter((cat, idx, self) =>
-        idx === self.findIndex(c => c.categoryName === cat.categoryName && c.type === cat.type)
-      );
-      setCategories(unique);
+      setCategories(res.data);
     } catch (err) {
       console.error("Lỗi lấy danh mục", err);
     }

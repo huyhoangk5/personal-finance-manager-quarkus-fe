@@ -34,11 +34,7 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
     if (!userId) return;
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories?type=${type}&userId=${userId}`);
-      const data = Array.isArray(res.data) ? res.data : [];
-      const unique = data.filter((cat, idx, self) =>
-        idx === self.findIndex(c => c.categoryName === cat.categoryName && c.type === cat.type)
-      );
-      setCategories(unique);
+      setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Lỗi lấy danh mục", err);
       setCategories([]);
@@ -473,4 +469,4 @@ const TransactionFormModal = ({ userId, show, onClose, onTransactionAdded, editD
   );
 };
 
-export default TransactionFormModal;
+export default TransactionFormModal;
