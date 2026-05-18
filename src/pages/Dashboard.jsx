@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle, Settings, Edit, ChevronDown, ChevronRight, Sun, Moon, Globe, Key, Eye, EyeOff } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle, Settings, Edit, ChevronDown, ChevronRight, Sun, Moon, Globe, Key, Eye, EyeOff, Shield } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
@@ -10,6 +10,7 @@ import CategoryBudgetManager from '../components/CategoryBudgetManager';
 import MonthlyCalendar from '../components/MonthlyCalendar';
 import EditProfileModal from '../components/EditProfileModal';
 import SettingsModal from '../components/SettingsModal';
+import AdminPanel from '../components/AdminPanel';
 import { useToast } from '../context/ToastContext';
 
 const Dashboard = () => {
@@ -140,6 +141,15 @@ const Dashboard = () => {
             <User />
             <span>Tài khoản</span>
           </button>
+          {user.role === 'ADMIN' && (
+            <button
+              className={`sidebar-link ${activeTab === 'admin' ? 'active' : ''}`}
+              onClick={() => setActiveTab('admin')}
+            >
+              <Shield />
+              <span>Quản lý</span>
+            </button>
+          )}
         </nav>
 
         <div className="sidebar-footer">
@@ -162,7 +172,7 @@ const Dashboard = () => {
       {/* Main Content Section */}
       <main className="main-content-with-sidebar flex-grow-1">
         {/* Header Section - Hidden on Account Tab */}
-        {activeTab !== 'account' && (
+        {activeTab !== 'account' && activeTab !== 'admin' && (
           <header className="d-flex justify-content-between align-items-center mb-5">
             <div>
               <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
@@ -172,7 +182,7 @@ const Dashboard = () => {
         )}
 
         {/* Dashboard Overview Cards - Hidden on Account Tab */}
-        {activeTab !== 'account' && (
+        {activeTab !== 'account' && activeTab !== 'admin' && (
           <div className="row g-4 mb-5">
             <div className="col-md-4">
               <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-primary border-4">
@@ -431,6 +441,9 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+            )}
+            {activeTab === 'admin' && user.role === 'ADMIN' && (
+              <AdminPanel />
             )}
           </div>
         </div>
