@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, BarChart3, FileText, AlertTriangle, Lock, Unlock, Key, Shield, ShieldOff, Search, RefreshCw, CheckCircle, XCircle, Activity, TrendingUp, Eye } from 'lucide-react';
+import { Users, BarChart3, FileText, AlertTriangle, Lock, Unlock, Shield, ShieldOff, Search, RefreshCw, CheckCircle, XCircle, Activity, TrendingUp, Eye } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -12,7 +12,6 @@ const AdminPanel = () => {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [resetResult, setResetResult] = useState(null);
 
   useEffect(() => {
     if (subTab === 'users') fetchUsers();
@@ -68,14 +67,6 @@ const AdminPanel = () => {
     try {
       await axios.put(`${API}/api/admin/users/${userId}/role`, { role });
       fetchUsers();
-    } catch (e) { alert(e.response?.data || 'Lỗi'); }
-  };
-
-  const resetPassword = async (userId) => {
-    try {
-      const res = await axios.put(`${API}/api/admin/users/${userId}/reset-password`, {});
-      setResetResult({ userId, password: res.data.newPassword });
-      setTimeout(() => setResetResult(null), 15000);
     } catch (e) { alert(e.response?.data || 'Lỗi'); }
   };
 
@@ -176,15 +167,7 @@ const AdminPanel = () => {
                           <button className={`btn btn-sm ${u.locked ? 'btn-outline-success' : 'btn-outline-warning'}`} onClick={() => toggleLock(u.userId)} title={u.locked ? 'Mở khóa' : 'Khóa'}>
                             {u.locked ? <Unlock size={14}/> : <Lock size={14}/>}
                           </button>
-                          <button className="btn btn-sm btn-outline-secondary" onClick={() => resetPassword(u.userId)} title="Reset mật khẩu">
-                            <Key size={14}/>
-                          </button>
                         </div>
-                        {resetResult?.userId === u.userId && (
-                          <div className="mt-1 p-2 bg-warning bg-opacity-10 rounded small">
-                            <strong>Mật khẩu mới:</strong> <code>{resetResult.password}</code>
-                          </div>
-                        )}
                       </td>
                     </tr>
                   ))}
