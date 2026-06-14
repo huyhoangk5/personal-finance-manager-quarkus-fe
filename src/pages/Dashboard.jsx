@@ -29,21 +29,11 @@ const Dashboard = () => {
   const [calendarMonth, setCalendarMonth] = useState(new Date().toISOString().slice(0, 7));
 
   const toast = useToast();
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'vi');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.setAttribute('data-bs-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', 'light');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     localStorage.setItem('language', language);
@@ -186,7 +176,7 @@ const Dashboard = () => {
           {activeTab !== 'account' && activeTab !== 'admin' && (
             <div className="row g-4 mb-5">
               <div className="col-md-4">
-                <div className="card border-0 p-4 h-100 aurora-bg" style={{ borderLeft: '4px solid var(--primary-blue)' }}>
+                <div className="card border-0 rounded-4 shadow-sm p-4 h-100 aurora-bg" style={{ borderLeft: '4px solid var(--primary-blue)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ THÁNG NÀY</small>
                     <div className="p-2 rounded-circle" style={{ background: 'var(--accent-blue)', color: 'var(--primary-blue)' }}>
@@ -199,7 +189,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-md-4">
-                <div className="card border-0 p-4 h-100" style={{ borderLeft: '4px solid var(--success)' }}>
+                <div className="card border-0 rounded-4 shadow-sm p-4 h-100" style={{ borderLeft: '4px solid var(--success)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG</small>
                     <div className="p-2 rounded-circle" style={{ background: '#D1FAE5', color: 'var(--success)' }}>
@@ -212,7 +202,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-md-4">
-                <div className="card border-0 p-4 h-100" style={{ borderLeft: '4px solid var(--danger)' }}>
+                <div className="card border-0 rounded-4 shadow-sm p-4 h-100" style={{ borderLeft: '4px solid var(--danger)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG</small>
                     <div className="p-2 rounded-circle" style={{ background: '#FFE4E6', color: 'var(--danger)' }}>
@@ -233,7 +223,7 @@ const Dashboard = () => {
               {activeTab === 'transactions' && (
                 <div className="row g-4">
                   <div className="col-lg-8">
-                    <div className="card border-0 overflow-hidden">
+                    <div className="card border-0 rounded-4 shadow-sm overflow-hidden">
                       <TransactionTable
                         userId={user.userId}
                         onDataChange={handleTransactionSaved}
@@ -244,7 +234,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="col-lg-4">
-                    <div className="card border-0 p-3">
+                    <div className="card border-0 rounded-4 shadow-sm p-3">
                       <MonthlyCalendar
                         userId={user.userId}
                         month={calendarMonth}
@@ -256,7 +246,7 @@ const Dashboard = () => {
                 </div>
               )}
               {activeTab === 'categoriesBudget' && (
-                <div className="card border-0 p-4">
+                <div className="card border-0 rounded-4 shadow-sm p-4">
                   <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />
                 </div>
               )}
@@ -368,25 +358,7 @@ const Dashboard = () => {
                             {showSettingsDropdown && (
                               <div className="mt-4 animate-fade-in">
                                 <div className="settings-card p-4 rounded-4 border-0" style={{ background: 'var(--bg-light)' }}>
-                                  <div className="mb-4">
-                                    <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
-                                      <Sun size={18} /> Chế độ giao diện
-                                    </label>
-                                    <div className="d-flex gap-2">
-                                      <button
-                                        className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'light' ? 'btn-primary fw-bold' : 'btn-outline-secondary'}`}
-                                        onClick={() => setTheme('light')}
-                                      >
-                                        <Sun size={16} /> Sáng
-                                      </button>
-                                      <button
-                                        className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'dark' ? 'btn-primary fw-bold' : 'btn-outline-secondary'}`}
-                                        onClick={() => setTheme('dark')}
-                                      >
-                                        <Moon size={16} /> Tối
-                                      </button>
-                                    </div>
-                                  </div>
+
                                   <div className="mb-0">
                                     <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
                                       <Globe size={18} /> Ngôn ngữ

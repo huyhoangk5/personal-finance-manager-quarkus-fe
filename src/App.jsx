@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+
 import { LanguageProvider } from './context/LanguageContext';
 import { ToastProvider } from './context/ToastContext';
 import Login from './pages/Login';
@@ -43,7 +43,6 @@ function App() {
   return (
     <GoogleOAuthProvider clientId="923508787768-tirtvocpu20jrba6khna61ppbqjv3idj.apps.googleusercontent.com">
       <AuthProvider>
-        <ThemeProvider>
           <LanguageProvider>
             <ToastProvider>
               <BrowserRouter>
@@ -52,7 +51,6 @@ function App() {
               </BrowserRouter>
             </ToastProvider>
           </LanguageProvider>
-        </ThemeProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   );

@@ -15,28 +15,17 @@ const SpendingChart = ({ userId }) => {
   const [lineData, setLineData] = useState(null);
   const [topCategories, setTopCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState(document.documentElement.getAttribute('data-bs-theme') || 'light');
 
-  // Lắng nghe sự thay đổi theme
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
-      setTheme(newTheme);
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme'] });
-    return () => observer.disconnect();
-  }, []);
 
   const getThemeColors = () => {
-    const isDark = theme === 'dark';
     return {
-      textColor: isDark ? '#f1f5f9' : '#0f172a',
-      gridColor: isDark ? '#1e293b' : '#e2e8f0',
-      legendColor: isDark ? '#94a3b8' : '#64748b',
-      tooltipBackground: isDark ? '#0f172a' : '#ffffff',
-      tooltipTitleColor: isDark ? '#f1f5f9' : '#0f172a',
-      tooltipBodyColor: isDark ? '#94a3b8' : '#64748b',
-      axisColor: isDark ? '#94a3b8' : '#64748b'
+      textColor: '#0f172a',
+      gridColor: '#e2e8f0',
+      legendColor: '#64748b',
+      tooltipBackground: '#ffffff',
+      tooltipTitleColor: '#0f172a',
+      tooltipBodyColor: '#64748b',
+      axisColor: '#64748b'
     };
   };
 
@@ -54,7 +43,7 @@ const SpendingChart = ({ userId }) => {
           data: Object.values(rawPie),
           backgroundColor: ['#0077b6', '#00b4d8', '#03045e', '#10b981', '#ef4444', '#f59e0b', '#64748b'],
           borderWidth: 2,
-          borderColor: theme === 'dark' ? '#0f172a' : '#fff'
+          borderColor: '#fff'
         }]
       });
 
@@ -188,13 +177,13 @@ const SpendingChart = ({ userId }) => {
           <div className="card border-0 bg-white p-4 h-100 shadow-sm">
             <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Cơ cấu chi tiêu tháng này</h6>
             <div style={{ height: '320px' }}>
-              {pieData && <Pie key={theme} data={pieData} options={pieOptions()} />}
+              {pieData && <Pie data={pieData} options={pieOptions()} />}
             </div>
           </div>
         </div>
 
         <div className="col-lg-5">
-          <div className="card border-0 bg-white p-4 h-100 shadow-sm">
+          <div className="card border-0 bg-white p-4 h-100 rounded-4 shadow-sm">
             <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Top danh mục chi tiêu</h6>
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
@@ -223,16 +212,16 @@ const SpendingChart = ({ userId }) => {
           <div className="card border-0 bg-white p-4 mt-2 shadow-sm">
             <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">So sánh Thu nhập & Chi tiêu</h6>
             <div style={{ height: '350px' }}>
-              {barData && <Bar key={theme} data={barData} options={getChartOptions()} />}
+              {barData && <Bar data={barData} options={getChartOptions()} />}
             </div>
           </div>
         </div>
 
         <div className="col-12">
-          <div className="card border-0 bg-white p-4 mt-2 shadow-sm">
+          <div className="card border-0 bg-white p-4 mt-2 rounded-4 shadow-sm">
             <h6 className="fw-bold mb-4 text-muted small text-uppercase letter-spacing">Xu hướng số dư tài khoản</h6>
             <div style={{ height: '350px' }}>
-              {lineData && <Line key={theme} data={lineData} options={getChartOptions()} />}
+              {lineData && <Line data={lineData} options={getChartOptions()} />}
             </div>
           </div>
         </div>

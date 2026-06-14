@@ -112,7 +112,7 @@ const AdminPanel = () => {
 
       {/* USERS TAB */}
       {subTab === 'users' && (
-        <div className="card border-0 shadow-sm p-4 bg-white">
+        <div className="card border-0 rounded-4 shadow-sm p-4 bg-white">
           <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h5 className="fw-bold mb-0">Quản lý người dùng ({users.length})</h5>
             <div className="d-flex gap-2 align-items-center">
@@ -143,7 +143,7 @@ const AdminPanel = () => {
                 <tbody>
                   {filteredUsers.map(u => (
                     <tr key={u.userId}>
-                      <td><span className="badge bg-light text-dark">#{u.userId}</span></td>
+                      <td><span className="badge bg-light text-main">#{u.userId}</span></td>
                       <td>
                         <div className="fw-bold">{u.username}</div>
                         <small className="text-muted">{u.fullName || '—'}</small>
@@ -186,28 +186,28 @@ const AdminPanel = () => {
           ) : stats && (
             <div className="row g-3">
               <div className="col-md-3">
-                <div className="card border-0 shadow-sm p-3 text-center bg-white">
+                <div className="card border-0 rounded-4 shadow-sm p-3 text-center bg-white">
                   <Users size={28} className="text-primary mx-auto mb-2"/>
                   <div className="text-muted small fw-bold">TỔNG NGƯỜI DÙNG</div>
                   <h3 className="fw-bold mb-0">{stats.totalUsers || 0}</h3>
                 </div>
               </div>
               <div className="col-md-3">
-                <div className="card border-0 shadow-sm p-3 text-center bg-white">
+                <div className="card border-0 rounded-4 shadow-sm p-3 text-center bg-white">
                   <Activity size={28} className="text-success mx-auto mb-2"/>
                   <div className="text-muted small fw-bold">TỔNG GIAO DỊCH</div>
                   <h3 className="fw-bold mb-0">{stats.totalTransactions || 0}</h3>
                 </div>
               </div>
               <div className="col-md-3">
-                <div className="card border-0 shadow-sm p-3 text-center bg-white">
+                <div className="card border-0 rounded-4 shadow-sm p-3 text-center bg-white">
                   <TrendingUp size={28} className="text-danger mx-auto mb-2"/>
                   <div className="text-muted small fw-bold">TỔNG CHI TIÊU</div>
                   <h3 className="fw-bold mb-0">{(stats.totalExpenses || 0).toLocaleString()}</h3>
                 </div>
               </div>
               <div className="col-md-3">
-                <div className="card border-0 shadow-sm p-3 text-center bg-white">
+                <div className="card border-0 rounded-4 shadow-sm p-3 text-center bg-white">
                   <Shield size={28} className="text-warning mx-auto mb-2"/>
                   <div className="text-muted small fw-bold">TÀI KHOẢN BỊ KHÓA</div>
                   <h3 className="fw-bold mb-0">{stats.lockedUsers || 0}</h3>
@@ -216,7 +216,7 @@ const AdminPanel = () => {
 
               {stats.topCategories && stats.topCategories.length > 0 && (
                 <div className="col-md-6">
-                  <div className="card border-0 shadow-sm p-4 bg-white">
+                  <div className="card border-0 rounded-4 shadow-sm p-4 bg-white">
                     <h6 className="fw-bold mb-3">Top danh mục được dùng nhiều nhất</h6>
                     {stats.topCategories.map((c, i) => (
                       <div key={i} className="d-flex justify-content-between align-items-center py-2 border-bottom">
@@ -230,7 +230,7 @@ const AdminPanel = () => {
 
               {stats.mostActiveUsers && stats.mostActiveUsers.length > 0 && (
                 <div className="col-md-6">
-                  <div className="card border-0 shadow-sm p-4 bg-white">
+                  <div className="card border-0 rounded-4 shadow-sm p-4 bg-white">
                     <h6 className="fw-bold mb-3">Người dùng hoạt động nhiều nhất</h6>
                     {stats.mostActiveUsers.map((u, i) => (
                       <div key={i} className="d-flex justify-content-between align-items-center py-2 border-bottom">
@@ -248,7 +248,7 @@ const AdminPanel = () => {
 
       {/* AUDIT LOG TAB */}
       {subTab === 'audit' && (
-        <div className="card border-0 shadow-sm p-4 bg-white">
+        <div className="card border-0 rounded-4 shadow-sm p-4 bg-white">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="fw-bold mb-0">Lịch sử hoạt động</h5>
             <button className="btn btn-light btn-sm d-flex align-items-center gap-1" onClick={fetchAuditLogs}><RefreshCw size={14}/> Làm mới</button>
@@ -271,7 +271,7 @@ const AdminPanel = () => {
                   {auditLogs.map((log, i) => (
                     <tr key={i}>
                       <td><small>{log.timestamp ? new Date(log.timestamp).toLocaleString('vi-VN') : '—'}</small></td>
-                      <td><span className="badge bg-light text-dark">#{log.userId}</span></td>
+                      <td><span className="badge bg-light text-main">#{log.userId}</span></td>
                       <td><span className="badge bg-primary bg-opacity-10 text-primary">{log.action}</span></td>
                       <td><small className="text-muted">{log.details || '—'}</small></td>
                       <td><small>{log.source || '—'}</small></td>
@@ -287,7 +287,7 @@ const AdminPanel = () => {
 
       {/* ALERTS TAB */}
       {subTab === 'alerts' && (
-        <div className="card border-0 shadow-sm p-4 bg-white">
+        <div className="card border-0 rounded-4 shadow-sm p-4 bg-white">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="fw-bold mb-0 d-flex align-items-center gap-2"><AlertTriangle size={20} className="text-warning"/> Cảnh báo nghi vấn</h5>
             <button className="btn btn-light btn-sm d-flex align-items-center gap-1" onClick={fetchAlerts}><RefreshCw size={14}/> Làm mới</button>
@@ -315,7 +315,7 @@ const AdminPanel = () => {
                   {alerts.map((a, i) => (
                     <tr key={i}>
                       <td><small>{a.timestamp ? new Date(a.timestamp).toLocaleString('vi-VN') : '—'}</small></td>
-                      <td><span className="badge bg-light text-dark">#{a.userId}</span></td>
+                      <td><span className="badge bg-light text-main">#{a.userId}</span></td>
                       <td><span className="badge bg-warning bg-opacity-10 text-warning">{a.action}</span></td>
                       <td><small>{a.details || '—'}</small></td>
                       <td>

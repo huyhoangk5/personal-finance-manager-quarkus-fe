@@ -123,7 +123,7 @@ const MonthlyCalendar = ({ userId, month, onMonthChange, refreshKey }) => {
                           )}
                         </div>
                         {hoverDate === day.date && (day.data.income > 0 || day.data.expense > 0) && (
-                          <div className="position-absolute top-100 start-50 translate-middle-x mt-1 bg-dark text-white rounded px-2 py-1 small z-3" style={{ whiteSpace: 'nowrap', fontSize: '0.7rem' }}>
+                          <div className="position-absolute top-100 start-50 translate-middle-x mt-1 bg-primary text-white rounded px-2 py-1 small z-3" style={{ whiteSpace: 'nowrap', fontSize: '0.7rem' }}>
                             Thu: {day.data.income.toLocaleString()}đ<br/>
                             Chi: {day.data.expense.toLocaleString()}đ
                           </div>

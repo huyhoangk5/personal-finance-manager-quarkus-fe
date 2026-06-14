@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sun, Moon, Globe, Key } from 'lucide-react';
+import { Globe, Key } from 'lucide-react';
 import axios from 'axios';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,22 +7,12 @@ import { useAuth } from '../context/AuthContext';
 const SettingsModal = ({ show, onClose }) => {
   const toast = useToast();
   const { user } = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'vi');
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.setAttribute('data-bs-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', 'light');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     localStorage.setItem('language', language);
@@ -69,13 +59,6 @@ const SettingsModal = ({ show, onClose }) => {
             <button onClick={onClose} className="btn-close"></button>
           </div>
           <div className="modal-body p-4">
-            <div className="mb-4">
-              <label className="form-label fw-bold d-flex align-items-center gap-2"><Sun size={18} /> <Moon size={18} /> Chế độ giao diện</label>
-              <div className="d-flex gap-2">
-                <button className={`btn ${theme === 'light' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setTheme('light')}>Sáng</button>
-                <button className={`btn ${theme === 'dark' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setTheme('dark')}>Tối</button>
-              </div>
-            </div>
             <div className="mb-4">
               <label className="form-label fw-bold d-flex align-items-center gap-2"><Globe size={18} /> Ngôn ngữ</label>
               <select className="form-select" value={language} onChange={e => setLanguage(e.target.value)}>

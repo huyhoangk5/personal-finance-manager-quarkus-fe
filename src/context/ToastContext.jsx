@@ -27,34 +27,33 @@ export const ToastProvider = ({ children }) => {
 
 const ToastContainer = ({ toasts, removeToast }) => {
   const getTypeConfig = (type) => {
-    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
     switch (type) {
       case 'success':
         return {
-          bg: isDark ? '#0a2e1a' : '#d4edda',
-          border: isDark ? '#1a5c30' : '#c3e6cb',
-          text: isDark ? '#e9ecef' : '#155724',
+          bg: '#d4edda',
+          border: '#c3e6cb',
+          text: '#155724',
           icon: '✔️'
         };
       case 'error':
         return {
-          bg: isDark ? '#3a1a1a' : '#f8d7da',
-          border: isDark ? '#7a2a2a' : '#f5c6cb',
-          text: isDark ? '#e9ecef' : '#721c24',
+          bg: '#f8d7da',
+          border: '#f5c6cb',
+          text: '#721c24',
           icon: '❌'
         };
       case 'warning':
         return {
-          bg: isDark ? '#3a2a1a' : '#fff3cd',
-          border: isDark ? '#7a5a2a' : '#ffeeba',
-          text: isDark ? '#e9ecef' : '#856404',
+          bg: '#fff3cd',
+          border: '#ffeeba',
+          text: '#856404',
           icon: '⚠️'
         };
       default:
         return {
-          bg: isDark ? '#1a2a3a' : '#d1ecf1',
-          border: isDark ? '#2a5a7a' : '#bee5eb',
-          text: isDark ? '#e9ecef' : '#0c5460',
+          bg: '#d1ecf1',
+          border: '#bee5eb',
+          text: '#0c5460',
           icon: 'ℹ️'
         };
     }

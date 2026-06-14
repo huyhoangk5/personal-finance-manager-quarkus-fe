@@ -84,7 +84,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
     if (limit <= 0) return null;
     const percent = (spent / limit) * 100;
     if (percent > 100) return { text: 'Vượt', class: 'bg-danger' };
-    if (percent >= 80) return { text: 'Cảnh báo', class: 'bg-warning text-dark' };
+    if (percent >= 80) return { text: 'Cảnh báo', class: 'bg-warning text-main' };
     return null;
   };
 
@@ -393,7 +393,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
       <div className="row g-4 mt-2">
         <div className="col-lg-5">
           <div className="p-4 bg-white rounded-4 h-100 shadow-sm border border-light">
-            <h6 className="mb-4 text-dark fw-bold d-flex align-items-center gap-2">
+            <h6 className="mb-4 text-main fw-bold d-flex align-items-center gap-2">
               <div className="p-1 bg-success rounded-circle text-white" style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
               </div>
@@ -402,7 +402,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
                 <thead>
-                  <tr className="text-dark small fw-bold">
+                  <tr className="text-main small fw-bold">
                     <th>DANH MỤC</th>
                     <th className="text-end">TỔNG THU</th>
                     <th className="text-center">THAO TÁC</th>
@@ -431,7 +431,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
         <div className="col-lg-7">
           <div className="p-4 bg-white rounded-4 h-100 shadow-sm border border-light">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h6 className="mb-0 text-dark fw-bold d-flex align-items-center gap-2">
+              <h6 className="mb-0 text-main fw-bold d-flex align-items-center gap-2">
                 <div className="p-1 bg-danger rounded-circle text-white" style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }}></div>
                 </div>
@@ -446,7 +446,7 @@ const CategoryBudgetManager = ({ userId, onDataChange }) => {
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
                 <thead>
-                  <tr className="text-dark small fw-bold">
+                  <tr className="text-main small fw-bold">
                     <th style={{ width: '30px' }}>
                       <input
                         type="checkbox"
