@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers, LogOut, User, Home, PlusCircle, Settings, Edit, ChevronDown, ChevronRight, Sun, Moon, Globe, Key, Eye, EyeOff, Shield } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, PlusCircle, Settings, Edit, ChevronDown, ChevronRight, Sun, Moon, Globe, Key, Shield } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CategoryBudgetManager from '../components/CategoryBudgetManager';
 import MonthlyCalendar from '../components/MonthlyCalendar';
 import EditProfileModal from '../components/EditProfileModal';
@@ -109,7 +109,7 @@ const Dashboard = () => {
       <aside className="sidebar-premium">
         <div className="sidebar-brand">
           <Wallet size={32} />
-          <span>Finance</span>
+          <span>WalletZen</span>
         </div>
 
         <nav className="sidebar-nav">
@@ -171,280 +171,252 @@ const Dashboard = () => {
 
       {/* Main Content Section */}
       <main className="main-content-with-sidebar flex-grow-1">
-        {/* Header Section - Hidden on Account Tab */}
-        {activeTab !== 'account' && activeTab !== 'admin' && (
-          <header className="d-flex justify-content-between align-items-center mb-5">
-            <div>
-              <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
-              <p className="text-muted mb-0">Chào mừng bạn trở lại, {user.fullName || user.username}!</p>
+        <div key={activeTab} className="animate-fade-in">
+          {/* Header Section - Hidden on Account / Admin Tab */}
+          {activeTab !== 'account' && activeTab !== 'admin' && (
+            <header className="d-flex justify-content-between align-items-center mb-5">
+              <div>
+                <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
+                <p className="text-muted mb-0">Chào mừng bạn trở lại, {user.fullName || user.username}!</p>
+              </div>
+            </header>
+          )}
+
+          {/* Dashboard Overview Cards */}
+          {activeTab !== 'account' && activeTab !== 'admin' && (
+            <div className="row g-4 mb-5">
+              <div className="col-md-4">
+                <div className="card border-0 p-4 h-100 aurora-bg" style={{ borderLeft: '4px solid var(--primary-blue)' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ THÁNG NÀY</small>
+                    <div className="p-2 rounded-circle" style={{ background: 'var(--accent-blue)', color: 'var(--primary-blue)' }}>
+                      <Wallet size={20} />
+                    </div>
+                  </div>
+                  <h2 className="fw-bold mb-0" style={{ color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                    {(balance.balance || 0).toLocaleString('vi-VN')} <small className="fs-6 fw-normal opacity-75">₫</small>
+                  </h2>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="card border-0 p-4 h-100" style={{ borderLeft: '4px solid var(--success)' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG</small>
+                    <div className="p-2 rounded-circle" style={{ background: '#D1FAE5', color: 'var(--success)' }}>
+                      <PlusCircle size={20} />
+                    </div>
+                  </div>
+                  <h2 className="fw-bold mb-0" style={{ color: 'var(--success)', letterSpacing: '-0.02em' }}>
+                    {(balance.totalIncomes || 0).toLocaleString('vi-VN')} <small className="fs-6 fw-normal opacity-75">₫</small>
+                  </h2>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="card border-0 p-4 h-100" style={{ borderLeft: '4px solid var(--danger)' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG</small>
+                    <div className="p-2 rounded-circle" style={{ background: '#FFE4E6', color: 'var(--danger)' }}>
+                      <PieChart size={20} />
+                    </div>
+                  </div>
+                  <h2 className="fw-bold mb-0" style={{ color: 'var(--danger)', letterSpacing: '-0.02em' }}>
+                    {(balance.totalExpenses || 0).toLocaleString('vi-VN')} <small className="fs-6 fw-normal opacity-75">₫</small>
+                  </h2>
+                </div>
+              </div>
             </div>
-          </header>
-        )}
+          )}
 
-        {/* Dashboard Overview Cards - Hidden on Account Tab */}
-        {activeTab !== 'account' && activeTab !== 'admin' && (
-          <div className="row g-4 mb-5">
-            <div className="col-md-4">
-              <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-primary border-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ HIỆN TẠI</small>
-                  <div className="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
-                    <Wallet size={20} />
+          {/* Dynamic Content Based on activeTab */}
+          <div className="row">
+            <div className="col-12">
+              {activeTab === 'transactions' && (
+                <div className="row g-4">
+                  <div className="col-lg-8">
+                    <div className="card border-0 overflow-hidden">
+                      <TransactionTable
+                        userId={user.userId}
+                        onDataChange={handleTransactionSaved}
+                        onEdit={(t) => { setEditingTransaction(t); setModalOpen(true); }}
+                        onAdd={() => { setEditingTransaction(null); setModalOpen(true); }}
+                        refreshKey={refreshKey}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-4">
+                    <div className="card border-0 p-3">
+                      <MonthlyCalendar
+                        userId={user.userId}
+                        month={calendarMonth}
+                        onMonthChange={setCalendarMonth}
+                        refreshKey={refreshKey}
+                      />
+                    </div>
                   </div>
                 </div>
-                <h2 className="fw-bold mb-0 text-dark">
-                  {(balance.balance || 0).toLocaleString()} <small className="fs-6 fw-normal opacity-75">VND</small>
-                </h2>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-success border-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG</small>
-                  <div className="bg-success bg-opacity-10 p-2 rounded-circle text-success">
-                    <PlusCircle size={20} />
-                  </div>
+              )}
+              {activeTab === 'categoriesBudget' && (
+                <div className="card border-0 p-4">
+                  <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />
                 </div>
-                <h2 className="fw-bold mb-0 text-dark">{(balance.totalIncomes || 0).toLocaleString()}</h2>
-                <div className="mt-2 text-success small fw-bold d-flex align-items-center gap-1">
-
+              )}
+              {activeTab === 'stats' && (
+                <div className="card border-0 p-4">
+                  <SpendingChart userId={user.userId} />
                 </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card border-0 shadow-sm p-4 bg-white h-100 border-start border-danger border-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG</small>
-                  <div className="bg-danger bg-opacity-10 p-2 rounded-circle text-danger">
-                    <PieChart size={20} />
-                  </div>
-                </div>
-                <h2 className="fw-bold mb-0 text-dark">{(balance.totalExpenses || 0).toLocaleString()}</h2>
-                <div className="mt-2 text-danger small fw-bold d-flex align-items-center gap-1">
-
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Dynamic Content Based on activeTab */}
-        <div className="row">
-          <div className="col-12">
-            {activeTab === 'transactions' && (
-              <div className="row g-4">
-                <div className="col-lg-8">
-                  <div className="card border-0 shadow-sm overflow-hidden bg-white">
-                    <TransactionTable
-                      userId={user.userId}
-                      onDataChange={handleTransactionSaved}
-                      onEdit={(t) => { setEditingTransaction(t); setModalOpen(true); }}
-                      onAdd={() => { setEditingTransaction(null); setModalOpen(true); }}
-                      refreshKey={refreshKey}
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-4">
-                  <div className="card border-0 shadow-sm p-3 bg-white">
-                    <MonthlyCalendar
-                      userId={user.userId}
-                      month={calendarMonth}
-                      onMonthChange={setCalendarMonth}
-                      refreshKey={refreshKey}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-            {activeTab === 'categoriesBudget' && (
-              <div className="card border-0 shadow-sm p-4 bg-white">
-                <CategoryBudgetManager userId={user.userId} onDataChange={handleTransactionSaved} />
-              </div>
-            )}
-            {activeTab === 'stats' && (
-              <div className="card border-0 shadow-sm p-4 bg-white">
-                <SpendingChart userId={user.userId} />
-              </div>
-            )}
-            {activeTab === 'account' && (
-              <div className="container-fluid py-2">
-                <div className="row justify-content-center">
-                  <div className="col-lg-8 col-xl-7">
-                    <div className="card border-0 shadow-premium rounded-4 overflow-hidden bg-white">
-                      {/* Cover Color Strip */}
-                      <div className="bg-primary-blue" style={{ height: '100px' }}></div>
-
-                      <div className="card-body p-4 p-md-5 pt-0">
-                        {/* Avatar Section */}
-                        <div className="text-center" style={{ marginTop: '-50px' }}>
-                          <div className="avatar-container-premium d-inline-block p-1 bg-white rounded-circle shadow-sm mb-3">
-                            <div className="bg-soft-blue rounded-circle d-flex align-items-center justify-content-center text-primary-blue" style={{ width: '100px', height: '100px' }}>
-                              <User size={48} />
-                            </div>
-                          </div>
-                          <h3 className="fw-bold text-dark mb-1">{user.fullName || user.username}</h3>
-                          <p className="text-muted mb-4">{user.email || 'Thành viên'}</p>
-                        </div>
-
-                        {/* Detailed Information */}
-                        <div className="user-details-grid mt-4">
-                          <div className="detail-item py-3 border-bottom">
-                            <div className="row align-items-center">
-                              <div className="col-sm-4 text-muted small fw-bold text-uppercase">Họ tên</div>
-                              <div className="col-sm-8 fw-semibold text-dark">{user.fullName || 'Chưa cập nhật'}</div>
-                            </div>
-                          </div>
-
-                          <div className="detail-item py-3 border-bottom">
-                            <div className="row align-items-center">
-                              <div className="col-sm-4 text-muted small fw-bold text-uppercase">Email</div>
-                              <div className="col-sm-8 fw-semibold text-dark">{user.email || 'Chưa cập nhật'}</div>
-                            </div>
-                          </div>
-
-                          <div className="detail-item py-3 border-bottom">
-                            <div className="row align-items-center">
-                              <div className="col-sm-4 text-muted small fw-bold text-uppercase">Tài khoản</div>
-                              <div className="col-sm-8 fw-semibold text-dark">{user.username}</div>
-                            </div>
-                          </div>
-
-                          <div className="detail-item py-3 border-bottom">
-                            <div className="row align-items-center">
-                              <div className="col-sm-4 text-muted small fw-bold text-uppercase">Mật khẩu</div>
-                              <div className="col-sm-8 d-flex align-items-center gap-3">
-                                <span className="fw-semibold text-dark">••••••••</span>
-                                <button
-                                  onClick={() => setShowChangePassword(!showChangePassword)}
-                                  className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1"
-                                >
-                                  <Key size={14} /> {showChangePassword ? 'Hủy' : 'Đổi mật khẩu'}
-                                </button>
+              )}
+              {activeTab === 'account' && (
+                <div className="container-fluid py-2">
+                  <div className="row justify-content-center">
+                    <div className="col-lg-8 col-xl-7">
+                      <div className="card border-0 overflow-hidden">
+                        {/* Cover strip */}
+                        <div style={{ height: '100px', background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%)' }}></div>
+                        <div className="card-body p-4 p-md-5 pt-0">
+                          {/* Avatar */}
+                          <div className="text-center" style={{ marginTop: '-50px' }}>
+                            <div className="d-inline-block p-1 rounded-circle mb-3" style={{ background: 'var(--bg-card)', border: '4px solid var(--border-color)' }}>
+                              <div className="bg-soft-blue rounded-circle d-flex align-items-center justify-content-center" style={{ width: '100px', height: '100px' }}>
+                                <User size={48} color="white" />
                               </div>
                             </div>
+                            <h3 className="fw-bold mb-1">{user.fullName || user.username}</h3>
+                            <p className="text-muted mb-4">{user.email || 'Thành viên'}</p>
                           </div>
-                        </div>
 
-                        {/* Change Password Form (Inline) */}
-                        {showChangePassword && (
-                          <div className="change-password-box mt-3 p-4 bg-light rounded-3 animate-fade-in">
-                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
-                              <Key size={18} className="text-primary" /> Cập nhật mật khẩu mới
-                            </h6>
-                            <div className="row g-3">
-                              <div className="col-12">
-                                <input
-                                  type="password"
-                                  className="form-control"
-                                  placeholder="Mật khẩu cũ"
-                                  value={oldPassword}
-                                  onChange={e => setOldPassword(e.target.value)}
-                                />
-                              </div>
-                              <div className="col-md-6">
-                                <input
-                                  type="password"
-                                  className="form-control"
-                                  placeholder="Mật khẩu mới"
-                                  value={newPassword}
-                                  onChange={e => setNewPassword(e.target.value)}
-                                />
-                              </div>
-                              <div className="col-md-6">
-                                <input
-                                  type="password"
-                                  className="form-control"
-                                  placeholder="Xác nhận mật khẩu mới"
-                                  value={confirmPassword}
-                                  onChange={e => setConfirmPassword(e.target.value)}
-                                />
-                              </div>
-                              <div className="col-12">
-                                <button
-                                  className="btn btn-primary w-100 py-2 fw-bold shadow-sm"
-                                  onClick={handleChangePassword}
-                                  disabled={loading}
-                                >
-                                  {loading ? <span className="spinner-border spinner-border-sm"></span> : 'Lưu mật khẩu mới'}
-                                </button>
+                          {/* Detailed Info */}
+                          <div className="user-details-grid mt-4">
+                            <div className="detail-item py-3 border-bottom">
+                              <div className="row align-items-center">
+                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Họ tên</div>
+                                <div className="col-sm-8 fw-semibold">{user.fullName || 'Chưa cập nhật'}</div>
                               </div>
                             </div>
-                          </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div className="mt-4 pt-2 d-flex flex-wrap gap-3">
-                          <button onClick={() => setShowEditProfile(true)} className="btn btn-primary-blue px-4 py-2 d-flex align-items-center gap-2 shadow-sm rounded-3">
-                            <Edit size={18} /> Chỉnh sửa hồ sơ
-                          </button>
-                        </div>
-
-                        {/* Settings Dropdown Section */}
-                        <div className="settings-section mt-5 pt-3 border-top">
-                          <button
-                            onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
-                            className="btn btn-link text-decoration-none text-dark fw-bold d-flex align-items-center justify-content-between w-100 p-0"
-                          >
-                            <span className="d-flex align-items-center gap-2">
-                              <Settings size={20} className="text-muted" /> Cài đặt & Tùy chỉnh
-                            </span>
-                            {showSettingsDropdown ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-                          </button>
-
-                          {showSettingsDropdown && (
-                            <div className="settings-dropdown-content mt-4 animate-fade-in">
-                              <div className="settings-card p-4 rounded-4 bg-light border-0">
-                                <div className="mb-4">
-                                  <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
-                                    <Sun size={18} /> Chế độ giao diện
-                                  </label>
-                                  <div className="d-flex gap-2">
-                                    <button
-                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'light' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`}
-                                      onClick={() => setTheme('light')}
-                                    >
-                                      <Sun size={16} /> Sáng
-                                    </button>
-                                    <button
-                                      className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'dark' ? 'btn-white shadow-sm fw-bold border' : 'btn-outline-secondary'}`}
-                                      onClick={() => setTheme('dark')}
-                                    >
-                                      <Moon size={16} /> Tối
-                                    </button>
-                                  </div>
-                                </div>
-
-                                <div className="mb-0">
-                                  <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
-                                    <Globe size={18} /> Ngôn ngữ
-                                  </label>
-                                  <select
-                                    className="form-select border-0 shadow-sm py-2 rounded-3"
-                                    value={language}
-                                    onChange={e => setLanguage(e.target.value)}
+                            <div className="detail-item py-3 border-bottom">
+                              <div className="row align-items-center">
+                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Email</div>
+                                <div className="col-sm-8 fw-semibold">{user.email || 'Chưa cập nhật'}</div>
+                              </div>
+                            </div>
+                            <div className="detail-item py-3 border-bottom">
+                              <div className="row align-items-center">
+                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Tài khoản</div>
+                                <div className="col-sm-8 fw-semibold">{user.username}</div>
+                              </div>
+                            </div>
+                            <div className="detail-item py-3 border-bottom">
+                              <div className="row align-items-center">
+                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Mật khẩu</div>
+                                <div className="col-sm-8 d-flex align-items-center gap-3">
+                                  <span className="fw-semibold">••••••••</span>
+                                  <button
+                                    onClick={() => setShowChangePassword(!showChangePassword)}
+                                    className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1"
                                   >
-                                    <option value="vi">Tiếng Việt</option>
-                                    <option value="en">English</option>
-                                    <option value="fr">Français</option>
-                                    <option value="ja">日本語</option>
-                                  </select>
-                                  <div className="mt-2 text-muted" style={{ fontSize: '0.75rem' }}>
-                                    * Chức năng đa ngôn ngữ đang trong quá trình phát triển
-                                  </div>
+                                    <Key size={14} /> {showChangePassword ? 'Hủy' : 'Đổi mật khẩu'}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Change Password Form */}
+                          {showChangePassword && (
+                            <div className="change-password-box mt-3 p-4 rounded-3 animate-fade-in" style={{ background: 'var(--bg-light)' }}>
+                              <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
+                                <Key size={18} style={{ color: 'var(--primary-blue)' }} /> Cập nhật mật khẩu mới
+                              </h6>
+                              <div className="row g-3">
+                                <div className="col-12">
+                                  <input type="password" className="form-control" placeholder="Mật khẩu cũ" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
+                                </div>
+                                <div className="col-md-6">
+                                  <input type="password" className="form-control" placeholder="Mật khẩu mới" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+                                </div>
+                                <div className="col-md-6">
+                                  <input type="password" className="form-control" placeholder="Xác nhận mật khẩu mới" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                                </div>
+                                <div className="col-12">
+                                  <button className="btn btn-primary w-100 py-2 fw-bold" onClick={handleChangePassword} disabled={loading}>
+                                    {loading ? <span className="spinner-border spinner-border-sm"></span> : 'Lưu mật khẩu mới'}
+                                  </button>
                                 </div>
                               </div>
                             </div>
                           )}
+
+                          {/* Action Buttons */}
+                          <div className="mt-4 pt-2 d-flex flex-wrap gap-3">
+                            <button onClick={() => setShowEditProfile(true)} className="btn btn-primary px-4 py-2 d-flex align-items-center gap-2 rounded-3">
+                              <Edit size={18} /> Chỉnh sửa hồ sơ
+                            </button>
+                          </div>
+
+                          {/* Settings Dropdown */}
+                          <div className="settings-section mt-5 pt-3 border-top">
+                            <button
+                              onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
+                              className="btn btn-link text-decoration-none fw-bold d-flex align-items-center justify-content-between w-100 p-0"
+                              style={{ color: 'var(--text-main)' }}
+                            >
+                              <span className="d-flex align-items-center gap-2">
+                                <Settings size={20} className="text-muted" /> Cài đặt & Tùy chỉnh
+                              </span>
+                              {showSettingsDropdown ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                            </button>
+
+                            {showSettingsDropdown && (
+                              <div className="mt-4 animate-fade-in">
+                                <div className="settings-card p-4 rounded-4 border-0" style={{ background: 'var(--bg-light)' }}>
+                                  <div className="mb-4">
+                                    <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
+                                      <Sun size={18} /> Chế độ giao diện
+                                    </label>
+                                    <div className="d-flex gap-2">
+                                      <button
+                                        className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'light' ? 'btn-primary fw-bold' : 'btn-outline-secondary'}`}
+                                        onClick={() => setTheme('light')}
+                                      >
+                                        <Sun size={16} /> Sáng
+                                      </button>
+                                      <button
+                                        className={`btn flex-grow-1 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 ${theme === 'dark' ? 'btn-primary fw-bold' : 'btn-outline-secondary'}`}
+                                        onClick={() => setTheme('dark')}
+                                      >
+                                        <Moon size={16} /> Tối
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <div className="mb-0">
+                                    <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
+                                      <Globe size={18} /> Ngôn ngữ
+                                    </label>
+                                    <select className="form-select border-0 shadow-sm py-2 rounded-3" value={language} onChange={e => setLanguage(e.target.value)}>
+                                      <option value="vi">Tiếng Việt</option>
+                                      <option value="en">English</option>
+                                      <option value="fr">Français</option>
+                                      <option value="ja">日本語</option>
+                                    </select>
+                                    <div className="mt-2 text-muted" style={{ fontSize: '0.75rem' }}>
+                                      * Chức năng đa ngôn ngữ đang trong quá trình phát triển
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-            {activeTab === 'admin' && user.role === 'ADMIN' && (
-              <AdminPanel />
-            )}
+              )}
+              {activeTab === 'admin' && user.role === 'ADMIN' && (
+                <div className="mt-4">
+                  <AdminPanel />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
