@@ -19,7 +19,11 @@ function AxiosSetup() {
   const { refreshAccessToken, logout } = useAuth();
   useEffect(() => {
     setupAxiosInterceptors(refreshAccessToken, logout);
-  }, [refreshAccessToken, logout]);
+    // Chỉ chạy 1 lần duy nhất sau khi mount.
+    // refreshAccessToken và logout đã được bọc useCallback nên ref ổn định,
+    // nhưng dùng mảng rỗng để đảm bảo interceptor không bị đăng ký lại.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return null;
 }
 

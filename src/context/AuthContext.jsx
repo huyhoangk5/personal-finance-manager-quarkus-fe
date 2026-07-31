@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     // Gọi API logout để revoke refresh token
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
@@ -55,13 +55,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     delete axios.defaults.headers.common['Authorization'];
-  };
+  }, []);
 
   /**
    * Làm mới access token bằng refresh token.
    * Trả về true nếu thành công, false nếu thất bại (cần login lại).
    */
-  const refreshAccessToken = async () => {
+  const refreshAccessToken = useCallback(async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return false;
     try {
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {
       return false;
     }
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, refreshAccessToken }}>

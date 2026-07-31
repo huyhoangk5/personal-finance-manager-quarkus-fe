@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers, LogOut, User, PlusCircle, Settings, Edit, ChevronDown, ChevronRight, Sun, Moon, Globe, Key, Shield } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, PlusCircle, Plus, Settings, Edit, ChevronDown, ChevronRight, ChevronLeft, Sun, Moon, Globe, Key, Shield } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
@@ -11,6 +11,7 @@ import MonthlyCalendar from '../components/MonthlyCalendar';
 import EditProfileModal from '../components/EditProfileModal';
 import SettingsModal from '../components/SettingsModal';
 import AdminPanel from '../components/AdminPanel';
+import AiAssistant from '../components/AiAssistant';
 import { useToast } from '../context/ToastContext';
 
 const Dashboard = () => {
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [overviewMonth, setOverviewMonth] = useState(new Date().toISOString().slice(0, 7));
 
   const toast = useToast();
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'vi');
@@ -65,17 +67,31 @@ const Dashboard = () => {
   const fetchBalance = async () => {
     if (!user) return;
     try {
-      const currentMonth = new Date().toISOString().slice(0, 7);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/balance-month?month=${currentMonth}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/balance-month?month=${overviewMonth}`);
       setBalance(res.data);
     } catch (err) {
       console.error("Lỗi lấy số dư tháng:", err);
     }
   };
 
+  const handleOverviewMonthChange = (delta) => {
+    setOverviewMonth(prev => {
+      const [year, month] = prev.split('-').map(Number);
+      const date = new Date(year, month - 1 + delta, 1);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    });
+  };
+
+  const formatOverviewMonth = (ym) => {
+    const [year, month] = ym.split('-').map(Number);
+    return `Tháng ${month} / ${year}`;
+  };
+
+  const isCurrentMonth = overviewMonth === new Date().toISOString().slice(0, 7);
+
   useEffect(() => {
     fetchBalance();
-  }, [user, refreshKey]);
+  }, [user, refreshKey, overviewMonth]);
 
   useEffect(() => {
     if (user) {
@@ -104,28 +120,28 @@ const Dashboard = () => {
 
         <nav className="sidebar-nav">
           <button
-            className={`sidebar-link ${activeTab === 'transactions' ? 'active' : ''}`}
+            className={`sidebar-link tab-giao-dich ${activeTab === 'transactions' ? 'active' : ''}`}
             onClick={() => setActiveTab('transactions')}
           >
             <List />
             <span>Giao dịch</span>
           </button>
           <button
-            className={`sidebar-link ${activeTab === 'categoriesBudget' ? 'active' : ''}`}
+            className={`sidebar-link tab-ngan-sach ${activeTab === 'categoriesBudget' ? 'active' : ''}`}
             onClick={() => setActiveTab('categoriesBudget')}
           >
             <Layers />
             <span>Ngân sách</span>
           </button>
           <button
-            className={`sidebar-link ${activeTab === 'stats' ? 'active' : ''}`}
+            className={`sidebar-link tab-thong-ke ${activeTab === 'stats' ? 'active' : ''}`}
             onClick={() => setActiveTab('stats')}
           >
             <PieChart />
             <span>Thống kê</span>
           </button>
           <button
-            className={`sidebar-link ${activeTab === 'account' ? 'active' : ''}`}
+            className={`sidebar-link tab-tai-khoan d-md-none ${activeTab === 'account' ? 'active' : ''}`}
             onClick={() => setActiveTab('account')}
           >
             <User />
@@ -133,7 +149,7 @@ const Dashboard = () => {
           </button>
           {user.role === 'ADMIN' && (
             <button
-              className={`sidebar-link ${activeTab === 'admin' ? 'active' : ''}`}
+              className={`sidebar-link admin-tab-mobile-hide ${activeTab === 'admin' ? 'active' : ''}`}
               onClick={() => setActiveTab('admin')}
             >
               <Shield />
@@ -141,33 +157,72 @@ const Dashboard = () => {
             </button>
           )}
         </nav>
-
-        <div className="sidebar-footer">
-          <div className="user-profile-sidebar">
-            <div className="user-avatar-sidebar">
-              {user.username?.charAt(0).toUpperCase()}
-            </div>
-            <div className="user-info-sidebar overflow-hidden">
-              <div className="fw-bold text-truncate" style={{ fontSize: '0.9rem' }}>{user.fullName || user.username}</div>
-              <div className="text-white-50 small text-truncate" style={{ fontSize: '0.75rem' }}>{user.email || 'Thành viên'}</div>
-            </div>
-          </div>
-          <button onClick={() => { logout(); navigate('/login'); }} className="sidebar-link text-danger w-100 border-0">
-            <LogOut />
-            <span>Đăng xuất</span>
-          </button>
-        </div>
       </aside>
 
       {/* Main Content Section */}
       <main className="main-content-with-sidebar flex-grow-1">
+        {/* Global Top Header - Desktop Only */}
+        <div className="desktop-top-header d-none d-md-flex justify-content-end align-items-center mb-3">
+          <div className="d-flex align-items-center gap-3">
+            <div 
+              className="d-flex align-items-center gap-3 user-profile-header-clickable" 
+              style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} 
+              onClick={() => setActiveTab('account')}
+              title="Xem thông tin tài khoản"
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.8'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <div className="text-end">
+                <div className="fw-bold" style={{ color: 'var(--text-main)', fontSize: '0.9rem' }}>{user.fullName || user.username}</div>
+                <div className="text-muted small" style={{ fontSize: '0.8rem' }}>{user.email || 'Thành viên'}</div>
+              </div>
+              <div className="user-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{width: 42, height: 42}}>
+                {user.username?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+            <button onClick={() => { logout(); navigate('/login'); }} className="btn btn-light text-danger p-2 border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center hover-scale" title="Đăng xuất" style={{width: 42, height: 42}}>
+              <LogOut size={18} />
+            </button>
+          </div>
+        </div>
+
         <div key={activeTab} className="animate-fade-in">
           {/* Header Section - Hidden on Account / Admin Tab */}
           {activeTab !== 'account' && activeTab !== 'admin' && (
-            <header className="d-flex justify-content-between align-items-center mb-5">
+            <header className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
               <div>
                 <h1 className="fw-bold mb-1">Tổng quan tài chính</h1>
                 <p className="text-muted mb-0">Chào mừng bạn trở lại, {user.fullName || user.username}!</p>
+              </div>
+              {/* Month Selector */}
+              <div className="d-flex align-items-center gap-2 overview-month-selector">
+                <button
+                  className="btn btn-sm overview-month-btn"
+                  onClick={() => handleOverviewMonthChange(-1)}
+                  aria-label="Tháng trước"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="overview-month-label">
+                  {formatOverviewMonth(overviewMonth)}
+                </span>
+                <button
+                  className="btn btn-sm overview-month-btn"
+                  onClick={() => handleOverviewMonthChange(1)}
+                  disabled={isCurrentMonth}
+                  aria-label="Tháng sau"
+                >
+                  <ChevronRight size={16} />
+                </button>
+                {!isCurrentMonth && (
+                  <button
+                    className="btn btn-sm overview-month-today-btn"
+                    onClick={() => setOverviewMonth(new Date().toISOString().slice(0, 7))}
+                    title="Quay về tháng hiện tại"
+                  >
+                    Hôm nay
+                  </button>
+                )}
               </div>
             </header>
           )}
@@ -178,7 +233,7 @@ const Dashboard = () => {
               <div className="col-md-4">
                 <div className="card border-0 rounded-4 shadow-sm p-4 h-100 aurora-bg" style={{ borderLeft: '4px solid var(--primary-blue)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ THÁNG NÀY</small>
+                    <small className="text-muted fw-bold letter-spacing-1">SỐ DƯ THÁNG {overviewMonth.split('-')[1]}</small>
                     <div className="p-2 rounded-circle" style={{ background: 'var(--accent-blue)', color: 'var(--primary-blue)' }}>
                       <Wallet size={20} />
                     </div>
@@ -191,7 +246,7 @@ const Dashboard = () => {
               <div className="col-md-4">
                 <div className="card border-0 rounded-4 shadow-sm p-4 h-100" style={{ borderLeft: '4px solid var(--success)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG</small>
+                    <small className="text-muted fw-bold letter-spacing-1">THU NHẬP THÁNG {overviewMonth.split('-')[1]}</small>
                     <div className="p-2 rounded-circle" style={{ background: '#D1FAE5', color: 'var(--success)' }}>
                       <PlusCircle size={20} />
                     </div>
@@ -204,7 +259,7 @@ const Dashboard = () => {
               <div className="col-md-4">
                 <div className="card border-0 rounded-4 shadow-sm p-4 h-100" style={{ borderLeft: '4px solid var(--danger)' }}>
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG</small>
+                    <small className="text-muted fw-bold letter-spacing-1">CHI TIÊU THÁNG {overviewMonth.split('-')[1]}</small>
                     <div className="p-2 rounded-circle" style={{ background: '#FFE4E6', color: 'var(--danger)' }}>
                       <PieChart size={20} />
                     </div>
@@ -340,6 +395,9 @@ const Dashboard = () => {
                             <button onClick={() => setShowEditProfile(true)} className="btn btn-primary px-4 py-2 d-flex align-items-center gap-2 rounded-3">
                               <Edit size={18} /> Chỉnh sửa hồ sơ
                             </button>
+                            <button onClick={() => { logout(); navigate('/login'); }} className="btn btn-light text-danger px-4 py-2 d-flex align-items-center gap-2 rounded-3 d-md-none">
+                              <LogOut size={18} /> Đăng xuất
+                            </button>
                           </div>
 
                           {/* Settings Dropdown */}
@@ -405,6 +463,17 @@ const Dashboard = () => {
         show={showSettings}
         onClose={() => setShowSettings(false)}
       />
+
+      {/* Mobile Add Transaction FAB */}
+      <button 
+        className="mobile-fab-add d-md-none d-flex align-items-center justify-content-center shadow-lg"
+        onClick={() => { setEditingTransaction(null); setModalOpen(true); }}
+        aria-label="Thêm giao dịch"
+      >
+        <Plus size={28} color="white" />
+      </button>
+
+      <AiAssistant onTransactionSaved={handleTransactionSaved} />
     </div>
   );
 };
