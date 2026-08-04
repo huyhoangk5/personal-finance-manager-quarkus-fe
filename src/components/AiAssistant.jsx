@@ -95,15 +95,22 @@ const AiAssistant = ({ onTransactionSaved }) => {
 
     const hasQuestion = questionKeywords.some(kw => lower.includes(kw));
     const hasTransaction = transactionKeywords.some(kw => lower.includes(kw));
+    // Có số tiền (chữ số đứng trước hoặc sau đơn vị)
+    const hasAmount = /\d/.test(lower) && (
+      /\d+\s*(k|nghìn|triệu|tr|đồng|vnd)/i.test(lower) ||
+      /(k|nghìn|triệu|tr)\s*\d/i.test(lower) ||
+      /\d{4,}/.test(lower) // Số >= 4 chữ số (1000 trở lên)
+    );
 
-    // Ưu tiên: nếu rõ ràng là câu hỏi và không có dấu hiệu giao dịch → chat
+    // Nếu có dấu hiệu giao dịch RÕ RÀNG (từ khóa + số tiền) → KHÔNG phải câu hỏi
+    if (hasTransaction && hasAmount) return false;
+    // Nếu rõ ràng là câu hỏi và không có dấu hiệu giao dịch → là chat
     if (hasQuestion && !hasTransaction) return true;
-    // Nếu có số tiền và động từ giao dịch → là lệnh giao dịch
-    if (/\d/.test(lower) && hasTransaction) return false;
-    // Mặc định: câu ngắn < 10 từ có dấu hiệu giao dịch → transaction
-    // Câu dài hoặc không rõ → thử chatbot trước
+    // Có câu hỏi lẫn giao dịch → ưu tiên route sang parse-transaction để AI quyết định
+    if (hasQuestion && hasTransaction) return false;
+    // Mặc định: câu ngắn không có dấu hiệu giao dịch → chat
     const wordCount = lower.split(/\s+/).length;
-    return wordCount > 8 || hasQuestion;
+    return wordCount > 10 && !hasTransaction;
   };
 
   // ─── Xử lý gửi tin nhắn ──────────────────────────────────────────────────
@@ -350,6 +357,7 @@ const AiAssistant = ({ onTransactionSaved }) => {
       let fullContent = '';
       let newSessionId = sessionId;
       let isDone = false;
+      let transactionSavedInChat = false;
 
       setIsLoading(false); // Dừng hiệu ứng loading dots, bắt đầu hiển thị stream
 
@@ -383,6 +391,10 @@ const AiAssistant = ({ onTransactionSaved }) => {
               setMessages(prev => prev.map(m =>
                 m.id === aiMsgId ? { ...m, type: 'text', content: fullContent || '(Không có phản hồi)' } : m
               ));
+              // Nếu chatbot đã lưu giao dịch → trigger refresh Dashboard
+              if (transactionSavedInChat && onTransactionSaved) {
+                onTransactionSaved();
+              }
               isDone = true;
               break;
             } else if (data.startsWith('[SESSION_ID] ')) {
@@ -403,6 +415,10 @@ const AiAssistant = ({ onTransactionSaved }) => {
                 tokenText = data.replace(/\\n/g, '\n');
               }
               fullContent += tokenText;
+              // Detect khi chatbot báo đã lưu giao dịch thành công
+              if (tokenText.includes('✅') || fullContent.includes('Đã lưu giao dịch')) {
+                transactionSavedInChat = true;
+              }
               setMessages(prev => prev.map(m =>
                 m.id === aiMsgId ? { ...m, content: fullContent } : m
               ));
