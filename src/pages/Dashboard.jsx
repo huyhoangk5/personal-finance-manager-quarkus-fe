@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, List, PieChart, Layers, LogOut, User, PlusCircle, Plus, Settings, Edit, ChevronDown, ChevronRight, ChevronLeft, Sun, Moon, Globe, Key, Shield } from 'lucide-react';
+import { Wallet, List, PieChart, Layers, LogOut, User, PlusCircle, Plus, Settings, Edit, ChevronDown, ChevronRight, ChevronLeft, Sun, Moon, Globe, Key, Shield, Eye, EyeOff, Lock } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
 import SpendingChart from '../components/SpendingChart';
 import TransactionFormModal from '../components/TransactionFormModal';
@@ -25,17 +25,28 @@ const Dashboard = () => {
 
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
-  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showTopHeaderDropdown, setShowTopHeaderDropdown] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date().toISOString().slice(0, 7));
   const [overviewMonth, setOverviewMonth] = useState(new Date().toISOString().slice(0, 7));
-
+ 
   const toast = useToast();
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'vi');
+  
+  // States for inline editing in Account Tab
+  const [isEditingFullName, setIsEditingFullName] = useState(false);
+  const [tempFullName, setTempFullName] = useState(user?.fullName || '');
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [tempEmail, setTempEmail] = useState(user?.email || '');
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [inlineSaveLoading, setInlineSaveLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('language', language);
@@ -105,7 +116,96 @@ const Dashboard = () => {
 
   const handleProfileUpdated = (updatedUser) => {
     login(updatedUser);
+    setTempFullName(updatedUser.fullName || '');
+    setTempEmail(updatedUser.email || '');
   };
+
+  const handleInlineSaveProfile = async (field, value) => {
+    setInlineSaveLoading(true);
+    try {
+      const payload = {};
+      if (field === 'fullName') {
+        const nameVal = validateFullName(value);
+        if (!nameVal.isValid()) {
+          toast.showToast('error', 'Lỗi', nameVal.getFirstError());
+          setInlineSaveLoading(false);
+          return;
+        }
+        payload.fullName = value.trim() || null;
+      }
+      if (field === 'email') {
+        const emailVal = validateEmail(value);
+        if (!emailVal.isValid()) {
+          toast.showToast('error', 'Lỗi', emailVal.getFirstError());
+          setInlineSaveLoading(false);
+          return;
+        }
+        payload.email = value.trim().toLowerCase() || null;
+      }
+
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${user.userId}`, payload);
+      if (res.data) {
+        const updatedUser = { ...user, ...res.data };
+        handleProfileUpdated(updatedUser);
+        toast.showToast('success', 'Thành công', 'Cập nhật thông tin tài khoản thành công');
+        if (field === 'fullName') setIsEditingFullName(false);
+        if (field === 'email') setIsEditingEmail(false);
+      }
+    } catch (err) {
+      let errorMsg = 'Cập nhật thất bại';
+      if (err.response?.status === 400) {
+        errorMsg = 'Email đã tồn tại. Vui lòng sử dụng email khác.';
+      } else if (err.response?.data) {
+        errorMsg = typeof err.response.data === 'string' ? err.response.data : JSON.stringify(err.response.data);
+      }
+      toast.showToast('error', 'Lỗi', errorMsg);
+    } finally {
+      setInlineSaveLoading(false);
+    }
+  };
+
+  const handleInlineChangePassword = async () => {
+    const passVal = validatePassword(newPassword);
+    const confirmVal = validatePasswordConfirmation(newPassword, confirmPassword);
+    if (!passVal.isValid()) {
+      toast.showToast('error', 'Lỗi', passVal.getFirstError());
+      return;
+    }
+    if (!confirmVal.isValid()) {
+      toast.showToast('error', 'Lỗi', confirmVal.getFirstError());
+      return;
+    }
+
+    setInlineSaveLoading(true);
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/change-password`, {
+        oldPassword,
+        newPassword
+      });
+      toast.showToast('success', 'Thành công', 'Mật khẩu đã được thay đổi');
+      setIsEditingPassword(false);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      toast.showToast('error', 'Thất bại', err.response?.data || 'Lỗi đổi mật khẩu');
+    } finally {
+      setInlineSaveLoading(false);
+    }
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setShowTopHeaderDropdown(false);
+    };
+    if (showTopHeaderDropdown) {
+      window.addEventListener('click', handleOutsideClick);
+    }
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+    };
+  }, [showTopHeaderDropdown]);
 
   if (!user) return null;
 
@@ -163,26 +263,48 @@ const Dashboard = () => {
       <main className="main-content-with-sidebar flex-grow-1">
         {/* Global Top Header - Desktop Only */}
         <div className="desktop-top-header d-none d-md-flex justify-content-end align-items-center mb-3">
-          <div className="d-flex align-items-center gap-3">
-            <div 
-              className="d-flex align-items-center gap-3 user-profile-header-clickable" 
-              style={{ cursor: 'pointer', transition: 'opacity 0.2s' }} 
-              onClick={() => setActiveTab('account')}
-              title="Xem thông tin tài khoản"
-              onMouseOver={(e) => e.currentTarget.style.opacity = '0.8'}
-              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              <div className="text-end">
-                <div className="fw-bold" style={{ color: 'var(--text-main)', fontSize: '0.9rem' }}>{user.fullName || user.username}</div>
-                <div className="text-muted small" style={{ fontSize: '0.8rem' }}>{user.email || 'Thành viên'}</div>
-              </div>
-              <div className="user-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{width: 42, height: 42}}>
-                {user.username?.charAt(0).toUpperCase()}
-              </div>
+          <div className="d-flex align-items-center gap-2 position-relative" onClick={(e) => e.stopPropagation()}>
+            <span className="fw-bold me-1" style={{ color: 'var(--text-main)', fontSize: '0.92rem' }}>
+              {user.fullName || user.username}
+            </span>
+            <div className="user-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{width: 38, height: 38}}>
+              {user.username?.charAt(0).toUpperCase()}
             </div>
-            <button onClick={() => { logout(); navigate('/login'); }} className="btn btn-light text-danger p-2 border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center hover-scale" title="Đăng xuất" style={{width: 42, height: 42}}>
-              <LogOut size={18} />
+            <button 
+              onClick={() => setShowTopHeaderDropdown(prev => !prev)} 
+              className={`btn btn-light p-2 border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center hover-scale ms-1 ${showTopHeaderDropdown ? 'active-settings-btn' : ''}`}
+              title="Cài đặt hệ thống"
+              style={{width: 38, height: 38}}
+            >
+              <Settings size={18} />
             </button>
+
+            {showTopHeaderDropdown && (
+              <div className="top-header-dropdown shadow-lg rounded-3 position-absolute bg-white py-2 border animate-fade-in" style={{ top: '48px', right: '0px', zIndex: 1050, minWidth: '180px' }}>
+                <button 
+                  onClick={() => { setActiveTab('account'); setShowTopHeaderDropdown(false); }}
+                  className="dropdown-item px-3 py-2 d-flex align-items-center gap-2 text-start w-100 border-0 bg-transparent text-dark"
+                >
+                  <User size={16} className="text-muted" />
+                  <span>Thông tin cá nhân</span>
+                </button>
+                <button 
+                  onClick={() => { setShowSettings(true); setShowTopHeaderDropdown(false); }}
+                  className="dropdown-item px-3 py-2 d-flex align-items-center gap-2 text-start w-100 border-0 bg-transparent text-dark"
+                >
+                  <Settings size={16} className="text-muted" />
+                  <span>Cài đặt</span>
+                </button>
+                <div className="dropdown-divider my-1 border-top"></div>
+                <button 
+                  onClick={() => { logout(); navigate('/login'); }}
+                  className="dropdown-item px-3 py-2 d-flex align-items-center gap-2 text-start text-danger w-100 border-0 bg-transparent"
+                >
+                  <LogOut size={16} />
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -311,129 +433,222 @@ const Dashboard = () => {
                 </div>
               )}
               {activeTab === 'account' && (
-                <div className="container-fluid py-2">
-                  <div className="row justify-content-center">
-                    <div className="col-lg-8 col-xl-7">
-                      <div className="card border-0 overflow-hidden">
+                <div className="container-fluid py-2 px-0">
+                  <div className="row g-0">
+                    <div className="col-12">
+                      <div className="card border-0 overflow-hidden rounded-4 shadow-sm bg-card">
                         {/* Cover strip */}
-                        <div style={{ height: '100px', background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%)' }}></div>
+                        <div style={{ height: '120px', background: 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%)' }}></div>
                         <div className="card-body p-4 p-md-5 pt-0">
-                          {/* Avatar */}
+                          {/* Avatar & Header */}
                           <div className="text-center" style={{ marginTop: '-50px' }}>
                             <div className="d-inline-block p-1 rounded-circle mb-3" style={{ background: 'var(--bg-card)', border: '4px solid var(--border-color)' }}>
                               <div className="bg-soft-blue rounded-circle d-flex align-items-center justify-content-center" style={{ width: '100px', height: '100px' }}>
                                 <User size={48} color="white" />
                               </div>
                             </div>
-                            <h3 className="fw-bold mb-1">{user.fullName || user.username}</h3>
-                            <p className="text-muted mb-4">{user.email || 'Thành viên'}</p>
+                            <h3 className="fw-bold mb-1 text-main">{user.fullName || user.username}</h3>
+                            <p className="text-muted mb-4 small">{user.email || 'Thành viên'}</p>
                           </div>
-
+ 
                           {/* Detailed Info */}
                           <div className="user-details-grid mt-4">
-                            <div className="detail-item py-3 border-bottom">
+                            
+                            {/* HỌ TÊN */}
+                            <div className="detail-item py-4 border-bottom">
                               <div className="row align-items-center">
-                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Họ tên</div>
-                                <div className="col-sm-8 fw-semibold">{user.fullName || 'Chưa cập nhật'}</div>
-                              </div>
-                            </div>
-                            <div className="detail-item py-3 border-bottom">
-                              <div className="row align-items-center">
-                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Email</div>
-                                <div className="col-sm-8 fw-semibold">{user.email || 'Chưa cập nhật'}</div>
-                              </div>
-                            </div>
-                            <div className="detail-item py-3 border-bottom">
-                              <div className="row align-items-center">
-                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Tài khoản</div>
-                                <div className="col-sm-8 fw-semibold">{user.username}</div>
-                              </div>
-                            </div>
-                            <div className="detail-item py-3 border-bottom">
-                              <div className="row align-items-center">
-                                <div className="col-sm-4 text-muted small fw-bold text-uppercase">Mật khẩu</div>
-                                <div className="col-sm-8 d-flex align-items-center gap-3">
-                                  <span className="fw-semibold">••••••••</span>
-                                  <button
-                                    onClick={() => setShowChangePassword(!showChangePassword)}
-                                    className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1"
-                                  >
-                                    <Key size={14} /> {showChangePassword ? 'Hủy' : 'Đổi mật khẩu'}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Change Password Form */}
-                          {showChangePassword && (
-                            <div className="change-password-box mt-3 p-4 rounded-3 animate-fade-in" style={{ background: 'var(--bg-light)' }}>
-                              <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
-                                <Key size={18} style={{ color: 'var(--primary-blue)' }} /> Cập nhật mật khẩu mới
-                              </h6>
-                              <div className="row g-3">
-                                <div className="col-12">
-                                  <input type="password" className="form-control" placeholder="Mật khẩu cũ" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
-                                </div>
-                                <div className="col-md-6">
-                                  <input type="password" className="form-control" placeholder="Mật khẩu mới" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-                                </div>
-                                <div className="col-md-6">
-                                  <input type="password" className="form-control" placeholder="Xác nhận mật khẩu mới" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
-                                </div>
-                                <div className="col-12">
-                                  <button className="btn btn-primary w-100 py-2 fw-bold" onClick={handleChangePassword} disabled={loading}>
-                                    {loading ? <span className="spinner-border spinner-border-sm"></span> : 'Lưu mật khẩu mới'}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Action Buttons */}
-                          <div className="mt-4 pt-2 d-flex flex-wrap gap-3">
-                            <button onClick={() => setShowEditProfile(true)} className="btn btn-primary px-4 py-2 d-flex align-items-center gap-2 rounded-3">
-                              <Edit size={18} /> Chỉnh sửa hồ sơ
-                            </button>
-                            <button onClick={() => { logout(); navigate('/login'); }} className="btn btn-light text-danger px-4 py-2 d-flex align-items-center gap-2 rounded-3 d-md-none">
-                              <LogOut size={18} /> Đăng xuất
-                            </button>
-                          </div>
-
-                          {/* Settings Dropdown */}
-                          <div className="settings-section mt-5 pt-3 border-top">
-                            <button
-                              onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
-                              className="btn btn-link text-decoration-none fw-bold d-flex align-items-center justify-content-between w-100 p-0"
-                              style={{ color: 'var(--text-main)' }}
-                            >
-                              <span className="d-flex align-items-center gap-2">
-                                <Settings size={20} className="text-muted" /> Cài đặt & Tùy chỉnh
-                              </span>
-                              {showSettingsDropdown ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-                            </button>
-
-                            {showSettingsDropdown && (
-                              <div className="mt-4 animate-fade-in">
-                                <div className="settings-card p-4 rounded-4 border-0" style={{ background: 'var(--bg-light)' }}>
-
-                                  <div className="mb-0">
-                                    <label className="form-label fw-bold d-flex align-items-center gap-2 mb-3 text-muted small text-uppercase letter-spacing-1">
-                                      <Globe size={18} /> Ngôn ngữ
-                                    </label>
-                                    <select className="form-select border-0 shadow-sm py-2 rounded-3" value={language} onChange={e => setLanguage(e.target.value)}>
-                                      <option value="vi">Tiếng Việt</option>
-                                      <option value="en">English</option>
-                                      <option value="fr">Français</option>
-                                      <option value="ja">日本語</option>
-                                    </select>
-                                    <div className="mt-2 text-muted" style={{ fontSize: '0.75rem' }}>
-                                      * Chức năng đa ngôn ngữ đang trong quá trình phát triển
+                                <div className="col-md-3 fw-bold text-main mb-2 mb-md-0">Họ tên</div>
+                                <div className="col-md-9">
+                                  {!isEditingFullName ? (
+                                    <div className="d-flex align-items-center justify-content-between gap-3">
+                                      <span className="fw-semibold text-main fs-6">{user.fullName || <em className="text-muted">Chưa cập nhật</em>}</span>
+                                      <button 
+                                        onClick={() => { setTempFullName(user.fullName || ''); setIsEditingFullName(true); }}
+                                        className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1 rounded-3 px-3 py-2"
+                                        title="Chỉnh sửa họ tên"
+                                      >
+                                        <Edit size={14} /> <span>Sửa</span>
+                                      </button>
                                     </div>
-                                  </div>
+                                  ) : (
+                                    <div className="input-group inline-edit-group shadow-sm rounded-3">
+                                      <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        value={tempFullName} 
+                                        onChange={e => setTempFullName(e.target.value)}
+                                        placeholder="Nhập họ và tên"
+                                      />
+                                      <button 
+                                        onClick={() => handleInlineSaveProfile('fullName', tempFullName)} 
+                                        className="btn btn-primary btn-sm px-3 fw-bold" 
+                                        disabled={inlineSaveLoading}
+                                      >
+                                        Lưu
+                                      </button>
+                                      <button 
+                                        onClick={() => setIsEditingFullName(false)} 
+                                        className="btn btn-outline-secondary btn-sm px-3"
+                                        disabled={inlineSaveLoading}
+                                      >
+                                        Hủy
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-                            )}
+                            </div>
+
+                            {/* EMAIL */}
+                            <div className="detail-item py-4 border-bottom">
+                              <div className="row align-items-center">
+                                <div className="col-md-3 fw-bold text-main mb-2 mb-md-0">Email</div>
+                                <div className="col-md-9">
+                                  {user.authType === 'Google OAuth' ? (
+                                    <div className="d-flex align-items-center gap-2 text-muted">
+                                      <span className="fw-semibold text-truncate">{user.email}</span>
+                                      <Lock size={14} className="opacity-50" />
+                                    </div>
+                                  ) : (
+                                    !isEditingEmail ? (
+                                      <div className="d-flex align-items-center justify-content-between gap-3">
+                                        <span className="fw-semibold text-main fs-6">{user.email || <em className="text-muted">Chưa cập nhật</em>}</span>
+                                        <button 
+                                          onClick={() => { setTempEmail(user.email || ''); setIsEditingEmail(true); }}
+                                          className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1 rounded-3 px-3 py-2"
+                                          title="Chỉnh sửa email"
+                                        >
+                                          <Edit size={14} /> <span>Sửa</span>
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="input-group inline-edit-group shadow-sm rounded-3">
+                                        <input 
+                                          type="email" 
+                                          className="form-control" 
+                                          value={tempEmail} 
+                                          onChange={e => setTempEmail(e.target.value)}
+                                          placeholder="email@example.com"
+                                        />
+                                        <button 
+                                          onClick={() => handleInlineSaveProfile('email', tempEmail)} 
+                                          className="btn btn-primary btn-sm px-3 fw-bold"
+                                          disabled={inlineSaveLoading}
+                                        >
+                                          Lưu
+                                        </button>
+                                        <button 
+                                          onClick={() => setIsEditingEmail(false)} 
+                                          className="btn btn-outline-secondary btn-sm px-3"
+                                          disabled={inlineSaveLoading}
+                                        >
+                                          Hủy
+                                        </button>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* TÀI KHOẢN (Cảnh báo không được sửa) */}
+                            <div className="detail-item py-4 border-bottom">
+                               <div className="row align-items-center">
+                                 <div className="col-md-3 fw-bold text-main mb-2 mb-md-0">Tài khoản</div>
+                                 <div className="col-md-9">
+                                   {user.authType === 'Google OAuth' ? (
+                                     <span></span>
+                                   ) : (
+                                     <div className="d-flex align-items-center gap-2 text-muted">
+                                       <span className="fw-semibold fs-6">{user.username}</span>
+                                       <Lock size={14} className="opacity-50" />
+                                     </div>
+                                   )}
+                                 </div>
+                               </div>
+                             </div>
+
+                            {/* MẬT KHẨU */}
+                            <div className="detail-item py-4 border-bottom">
+                              <div className="row align-items-start">
+                                <div className="col-md-3 fw-bold text-main mb-2 mb-md-0">Mật khẩu</div>
+                                <div className="col-md-9">
+                                  {user.authType === 'Google OAuth' ? (
+                                    <div className="d-flex align-items-center gap-2 text-muted">
+                                      <span className="fw-semibold">••••••••</span>
+                                      <Lock size={14} className="opacity-50" />
+                                    </div>
+                                  ) : (
+                                    !isEditingPassword ? (
+                                      <div className="d-flex align-items-center justify-content-between gap-3">
+                                        <span className="fw-semibold text-muted fs-6">••••••••</span>
+                                        <button 
+                                          onClick={() => setIsEditingPassword(true)}
+                                          className="btn btn-sm btn-soft-primary d-flex align-items-center gap-1 rounded-3 px-3 py-2"
+                                          title="Sửa mật khẩu"
+                                        >
+                                          <Edit size={14} /> <span>Sửa</span>
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="change-password-inline-box p-4 rounded-3 border animate-fade-in bg-light mt-1">
+                                        <div className="row g-3">
+                                          <div className="col-12">
+                                            <label className="form-label small fw-semibold text-muted">Mật khẩu hiện tại</label>
+                                            <div className="input-group">
+                                              <input type={showOldPassword ? 'text' : 'password'} className="form-control border-end-0" placeholder="Nhập mật khẩu hiện tại" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
+                                              <button type="button" className="input-group-text bg-white text-muted" onClick={() => setShowOldPassword(p => !p)} tabIndex={-1}>
+                                                {showOldPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                              </button>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-6">
+                                            <label className="form-label small fw-semibold text-muted">Mật khẩu mới</label>
+                                            <div className="input-group">
+                                              <input type={showNewPassword ? 'text' : 'password'} className="form-control border-end-0" placeholder="6-16 ký tự" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+                                              <button type="button" className="input-group-text bg-white text-muted" onClick={() => setShowNewPassword(p => !p)} tabIndex={-1}>
+                                                {showNewPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                              </button>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-6">
+                                            <label className="form-label small fw-semibold text-muted">Xác nhận mật khẩu mới</label>
+                                            <div className="input-group">
+                                              <input type={showConfirmPassword ? 'text' : 'password'} className="form-control border-end-0" placeholder="Nhập lại mật khẩu mới" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                                              <button type="button" className="input-group-text bg-white text-muted" onClick={() => setShowConfirmPassword(p => !p)} tabIndex={-1}>
+                                                {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                              </button>
+                                            </div>
+                                          </div>
+                                          <div className="col-12 d-flex gap-2 mt-4">
+                                            <button 
+                                              className="btn btn-primary px-4 fw-bold" 
+                                              onClick={handleInlineChangePassword} 
+                                              disabled={inlineSaveLoading}
+                                            >
+                                              {inlineSaveLoading ? <span className="spinner-border spinner-border-sm"></span> : 'Xác nhận đổi'}
+                                            </button>
+                                            <button 
+                                              className="btn btn-outline-secondary px-4" 
+                                              onClick={() => {
+                                                setIsEditingPassword(false);
+                                                setOldPassword('');
+                                                setNewPassword('');
+                                                setConfirmPassword('');
+                                              }} 
+                                              disabled={inlineSaveLoading}
+                                            >
+                                              Hủy bỏ
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -452,13 +667,7 @@ const Dashboard = () => {
       </main>
 
       <TransactionFormModal userId={user.userId} show={modalOpen} onClose={() => setModalOpen(false)} onTransactionAdded={handleTransactionSaved} editData={editingTransaction} />
-
-      <EditProfileModal
-        show={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-        user={user}
-        onUpdate={handleProfileUpdated}
-      />
+ 
       <SettingsModal
         show={showSettings}
         onClose={() => setShowSettings(false)}

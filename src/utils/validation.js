@@ -2,7 +2,7 @@
 
 // Regex patterns
 const USERNAME_PATTERN = /^[a-zA-Z0-9.@_-]{3,50}$/;
-const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,16}$/;
+const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]{6,16}$/;
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const FULLNAME_PATTERN = /^[a-zA-ZÀ-ỹ\s\.]{1,100}$/;
 const PHONE_PATTERN = /^0\d{9,10}$/;

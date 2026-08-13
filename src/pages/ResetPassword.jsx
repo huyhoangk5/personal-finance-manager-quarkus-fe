@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../context/ToastContext';
 import { validatePassword, validatePasswordConfirmation } from '../utils/validation';
+import { Eye, EyeOff } from 'lucide-react';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +15,8 @@ const ResetPassword = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
   const toast = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Real-time validation
   useEffect(() => {
@@ -92,28 +95,38 @@ const ResetPassword = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted text-uppercase">Mật khẩu mới</label>
-                    <input
-                      type="password"
-                      className={`form-control bg-light ${validationErrors.newPassword ? 'is-invalid' : ''}`}
-                      placeholder="6-16 ký tự, có chữ hoa, thường, số, ký tự đặc biệt"
-                      value={newPassword}
-                      onChange={e => setNewPassword(e.target.value)}
-                      required
-                    />
+                    <div className="input-group">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        className={`form-control border-end-0 bg-light ${validationErrors.newPassword ? 'is-invalid' : ''}`}
+                        placeholder="6-16 ký tự, có chữ hoa, thường, số, ký tự đặc biệt"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        required
+                      />
+                      <button type="button" className="input-group-text bg-light text-muted" onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                     {validationErrors.newPassword && (
                       <div className="invalid-feedback d-block small">{validationErrors.newPassword}</div>
                     )}
                   </div>
                   <div className="mb-4">
                     <label className="form-label small fw-bold text-muted text-uppercase">Xác nhận mật khẩu</label>
-                    <input
-                      type="password"
-                      className={`form-control bg-light ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
-                      placeholder="Nhập lại mật khẩu mới"
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                      required
-                    />
+                    <div className="input-group">
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        className={`form-control border-end-0 bg-light ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
+                        placeholder="Nhập lại mật khẩu mới"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        required
+                      />
+                      <button type="button" className="input-group-text bg-light text-muted" onClick={() => setShowConfirmPassword(p => !p)} tabIndex={-1}>
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                     {validationErrors.confirmPassword && (
                       <div className="invalid-feedback d-block small">{validationErrors.confirmPassword}</div>
                     )}

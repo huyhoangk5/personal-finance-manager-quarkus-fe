@@ -737,3 +737,58 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
   }
 }
+
+/* ── Top Header Settings Dropdown ───────────────────────── */
+.top-header-dropdown {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  width: 200px;
+  margin-top: 8px;
+  right: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.top-header-dropdown .dropdown-item {
+  color: var(--text-main) !important;
+  font-size: 0.88rem;
+  font-weight: 550;
+  padding: 10px 16px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.top-header-dropdown .dropdown-item:hover {
+  background-color: var(--bg-light) !important;
+  color: var(--primary-blue) !important;
+}
+
+.active-settings-btn {
+  background-color: var(--primary-blue) !important;
+  color: #ffffff !important;
+}
+
+/* ── Account Inline Editing Layout ───────────────────────── */
+.inline-edit-group {
+  max-width: 500px;
+}
+
+.inline-edit-group input {
+  border-right: none;
+}
+
+.change-password-inline-box {
+  background-color: var(--bg-light);
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-sm);
+  max-width: 650px;
+}
+
+@media (max-width: 767px) {
+  .inline-edit-group {
+    max-width: 100%;
+  }
+  .change-password-inline-box {
+    max-width: 100%;
+  }
+}

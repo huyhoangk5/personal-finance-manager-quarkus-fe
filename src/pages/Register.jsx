@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { Wallet, Lock, Mail, UserPlus, Facebook, Smartphone, ArrowRight } from 'lucide-react';
+import { Wallet, Lock, Mail, UserPlus, Facebook, Smartphone, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -27,6 +27,8 @@ const Register = () => {
   
   // Validation errors
   const [validationErrors, setValidationErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Lấy QR token
   useEffect(() => {
@@ -189,13 +191,16 @@ const Register = () => {
                           <div className="input-group">
                             <span className="input-group-text bg-light border-end-0 text-muted"><Lock size={18} /></span>
                             <input 
-                              type="password" 
-                              className={`form-control border-start-0 bg-light ${validationErrors.password ? 'is-invalid' : ''}`}
+                              type={showPassword ? 'text' : 'password'}
+                              className={`form-control border-start-0 border-end-0 bg-light ${validationErrors.password ? 'is-invalid' : ''}`}
                               placeholder="6-16 ký tự, có chữ hoa, thường, số, ký tự đặc biệt" 
                               value={password} 
                               onChange={e => setPassword(e.target.value)} 
                               required 
                             />
+                            <button type="button" className="input-group-text bg-light border-start-0 text-muted" onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
                           </div>
                           {validationErrors.password && (
                             <div className="invalid-feedback d-block small">{validationErrors.password}</div>
@@ -206,13 +211,16 @@ const Register = () => {
                           <div className="input-group">
                             <span className="input-group-text bg-light border-end-0 text-muted"><Lock size={18} /></span>
                             <input 
-                              type="password" 
-                              className={`form-control border-start-0 bg-light ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              className={`form-control border-start-0 border-end-0 bg-light ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
                               placeholder="Nhập lại mật khẩu" 
                               value={confirmPassword} 
                               onChange={e => setConfirmPassword(e.target.value)} 
                               required 
                             />
+                            <button type="button" className="input-group-text bg-light border-start-0 text-muted" onClick={() => setShowConfirmPassword(p => !p)} tabIndex={-1}>
+                              {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
                           </div>
                           {validationErrors.confirmPassword && (
                             <div className="invalid-feedback d-block small">{validationErrors.confirmPassword}</div>

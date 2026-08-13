@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Wallet, Lock, Mail, ArrowRight, Facebook, Smartphone, Search } from 'lucide-react';
+import { Wallet, Lock, Mail, ArrowRight, Facebook, Smartphone, Search, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -25,6 +25,7 @@ const Login = () => {
   const [qrError, setQrError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const pollingRef = useRef(null);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -224,7 +225,10 @@ const Login = () => {
                               <label className="form-label small fw-bold text-muted text-uppercase">Mật khẩu</label>
                               <div className="input-group">
                                 <span className="input-group-text bg-light border-end-0 text-muted"><Lock size={18} /></span>
-                                <input type="password" className="form-control border-start-0 bg-light" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                                <input type={showPassword ? 'text' : 'password'} className="form-control border-start-0 border-end-0 bg-light" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                                <button type="button" className="input-group-text bg-light border-start-0 text-muted" onClick={() => setShowPassword(p => !p)} tabIndex={-1} aria-label={showPassword ? 'An mật khẩu' : 'Hiện mật khẩu'}>
+                                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
                               </div>
                             </div>
                             <div className="mb-4 d-flex justify-content-between align-items-center">
