@@ -144,7 +144,7 @@ const AiAssistant = ({ onTransactionSaved }) => {
       const res = await axios.post(`${API_URL}/api/ai/parse-transaction`, {
         userMessage: text,
         previousContext: previousContext,
-      }, { timeout: 15000 });
+      }, { timeout: 30000 });
 
       const result = res.data;
 
@@ -219,7 +219,7 @@ const AiAssistant = ({ onTransactionSaved }) => {
         const res = await axios.post(`${API_URL}/api/ai/parse-transaction`, {
           userMessage: text,
           previousContext: previousContext,
-        }, { timeout: 15000 });
+        }, { timeout: 30000 });
         const result = res.data;
         if (result.isComplete) {
           setPendingTransaction(result);
@@ -573,7 +573,7 @@ const AiAssistant = ({ onTransactionSaved }) => {
               </button>
             </div>
             <div className="ai-chatbox__footer-note">
-              WalletZen AI · Được cung cấp bởi Groq Llama 3
+              WalletZen AI · Được cung cấp bởi Groq GPT-OSS 120B
             </div>
           </div>
         </div>
